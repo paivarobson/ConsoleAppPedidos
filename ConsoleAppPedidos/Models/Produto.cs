@@ -14,6 +14,7 @@ namespace ConsoleAppPedidos.Models
         /// </summary>
         [Key]
         public int ID { get; set; }
+
         /// <summary>
         /// Nome do Produto.
         /// </summary>
@@ -21,6 +22,7 @@ namespace ConsoleAppPedidos.Models
         [StringLength(255, ErrorMessage = "O campo Nome deve ter no máximo 255 caracteres.")]
         [Column(TypeName = "varchar")]
         public string Nome { get; set; }
+
         /// <summary>
         /// Categoria do Produto.
         /// </summary>

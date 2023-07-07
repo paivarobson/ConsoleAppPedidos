@@ -14,6 +14,7 @@ namespace ConsoleAppPedidos.Models
         /// </summary>
         [Key]
         public int ID { get; set; }
+
         /// <summary>
         /// Identificador do Pedido.
         /// </summary>
@@ -21,12 +22,14 @@ namespace ConsoleAppPedidos.Models
         [StringLength(255, ErrorMessage = "O campo Identificador deve ter no máximo 255 caracteres.")]
         [Column(TypeName = "varchar")]
         public string Identificador { get; set; }
+
         /// <summary>
         /// Descrição do Pedido.
         /// </summary>
         [StringLength(1000, ErrorMessage = "O campo Descrição deve ter no máximo 1000 caracteres.")]
         [Column(TypeName = "varchar")]
         public string? Descricao { get; set; }
+
         /// <summary>
         /// Valor total do Pedido.
         /// </summary>

@@ -21,14 +21,14 @@ namespace ConsoleAppPedidos.Data
         /// <summary>
         /// Propriedade que representará a tabela Produtos do BD.
         /// </summary>
-        public DbSet<Produto> Produto { get; set; }
+        public DbSet<Produto> Produtos { get; set; }
         /// <summary>
         /// Propriedade que representará a tabela Pedidos do BD.
         /// </summary>
-        public DbSet<Pedido> Pedido { get; set; }
+        public DbSet<Pedido> Pedidos { get; set; }
         /// <summary>
         /// Propriedade que representará a tabela ItensDePedido do BD.
         /// </summary>
-        public DbSet<ItensDePedido> ItensDePedido { get; set; }
+        public DbSet<ItemDoPedido> ItensDePedido { get; set; }
     }
 }

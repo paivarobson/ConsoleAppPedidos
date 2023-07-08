@@ -9,13 +9,13 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
         /// </summary>
-        private readonly DBContexto dbContexto;
+        private readonly AppDbContexto dbContexto;
 
         /// <summary>
         /// Construtor da classe ItemDoPedidoRepositories.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
-        public ItemDoPedidoRepository(DBContexto dbContexto)
+        public ItemDoPedidoRepository(AppDbContexto dbContexto)
         {
             this.dbContexto = dbContexto;
         }

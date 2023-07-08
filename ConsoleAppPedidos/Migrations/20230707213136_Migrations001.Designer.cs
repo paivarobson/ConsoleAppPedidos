@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ConsoleAppPedidos.Migrations
 {
-    [DbContext(typeof(DBContexto))]
+    [DbContext(typeof(AppDbContexto))]
     [Migration("20230707213136_Migrations001")]
     partial class Migrations001
     {

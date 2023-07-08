@@ -11,51 +11,51 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os produtos.
         /// </summary>
-        private readonly DBContexto dbContexto;
+        private readonly AppDbContexto dbContexto;
 
         /// <summary>
-        /// Construtor da classe ProdutoRepositories.
+        /// Construtor da classe ProdutoRepository.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
-        public ProdutoRepository(DBContexto dbContexto)
+        public ProdutoRepository(AppDbContexto dbContexto)
         {
             this.dbContexto = dbContexto;
         }
 
         /// <summary>
-        /// Método para criar um novo produto.
+        /// Cria um novo produto.
         /// </summary>
-        /// <param name="produto">Produto que será criado.</param>
+        /// <param name="produto">O produto a ser criado.</param>
         public void CriarProduto(Produto produto)
         {
             dbContexto.Produtos.Add(produto);
-
             dbContexto.SaveChanges();
         }
 
         /// <summary>
-        /// Método para carregar todos os produtos.
+        /// Consulta todos os produtos.
         /// </summary>
-        /// <returns>Retorna todos os produtos. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
+        /// <returns>Uma lista de produtos.</returns>
         public IQueryable<Produto> ConsultarProdutos()
         {
             return dbContexto.Produtos.AsQueryable();
         }
 
         /// <summary>
-        /// Método para carregar um produto.
+        /// Consulta um produto pelo ID.
         /// </summary>
-        /// <param name="produtoId">ID do produto.</param>
-        /// <returns>Retorna o produto encontrado ou null se não encontrado.</returns>
+        /// <param name="produtoId">O ID do produto.</param>
+        /// <returns>O produto encontrado ou null se não encontrado.</returns>
         public Produto ConsultarProduto(int produtoId)
         {
             return dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
         }
 
         /// <summary>
-        /// Método para alterar um produto existente.
+        /// Altera um produto existente.
         /// </summary>
-        /// <param name="produto">Retorna o produto com as alterações.</param>
+        /// <param name="produto">O produto com as alterações.</param>
+        /// <returns>True se o produto foi alterado com sucesso, False caso contrário.</returns>
         public bool AlterarProduto(Produto produto)
         {
             var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produto.ID);
@@ -74,13 +74,12 @@ namespace ConsoleAppPedidos.Data.Repositories
         }
 
         /// <summary>
-        /// Método para excluir um produto.
+        /// Exclui um produto.
         /// </summary>
-        /// <param name="produto">Produto que será excluído.</param>
+        /// <param name="produto">O produto a ser excluído.</param>
         public void ExcluirProduto(Produto produto)
         {
             dbContexto.Produtos.Remove(produto);
-
             dbContexto.SaveChanges();
         }
     }

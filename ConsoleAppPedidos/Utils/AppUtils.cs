@@ -3,7 +3,7 @@
     /// <summary>
     /// Classe de métodos úteis
     /// </summary>
-    public static class HelpTools
+    public static class AppUtils
     {
         /// <summary>
         /// Carrega a categoria do produto com base no seu ID.

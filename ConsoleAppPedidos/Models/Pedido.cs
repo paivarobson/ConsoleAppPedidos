@@ -36,6 +36,11 @@ namespace ConsoleAppPedidos.Models
         [Required(ErrorMessage = "O campo Valor Total é obrigatório.")]
         [Column(TypeName = "decimal(21,2)")]
         public decimal ValorTotal { get; set; }
+
+        /// <summary>
+        /// Itens do pedido associados ao pedido.
+        /// </summary>
+        public ICollection<ItemDoPedido> ItensDoPedido { get; set; }
     }
 }
 

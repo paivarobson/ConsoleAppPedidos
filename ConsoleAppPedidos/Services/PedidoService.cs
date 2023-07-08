@@ -46,8 +46,21 @@ namespace ConsoleAppPedidos.Services
                     int produtoId = int.Parse(Console.ReadLine());
                     Console.Write("Quantidade: ");
                     int quantidade = int.Parse(Console.ReadLine());
+
+                    while (quantidade < 1)
+                    {
+                        Console.Write("Quantidade deve ser maior que 0. Tente novamente: ");
+                        quantidade = int.Parse(Console.ReadLine());
+                    }
+
                     Console.Write("Valor Unitário: ");
                     double valorUnitario = double.Parse(Console.ReadLine());
+
+                    while (valorUnitario < 0.00)
+                    {
+                        Console.Write("Valor Unitário deve ser maior ou igual a R$ 0. Tente novamente: ");
+                        quantidade = int.Parse(Console.ReadLine());
+                    }
 
                     // Cria um novo item do pedido
                     novoItem = new ItemDoPedido
@@ -57,8 +70,17 @@ namespace ConsoleAppPedidos.Services
                         Valor = valorUnitario
                     };
 
-                    // Adiciona o item ao pedido no repositório
-                    itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                    bool itemExistenteNoPedido = itemPedidoRepository.ConsultarItensDoPedido(novoPedido.ID).Any(i => i.ProdutoID == produtoId);
+
+                    if (!itemExistenteNoPedido)
+                    {
+                        // Adiciona o item ao pedido no repositório
+                        itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Produto já presente no item de pedido.");
+                    }
 
                     Console.Write("Deseja adicionar novo item? (y/n):");
                     adicionarNovoItem = Console.ReadLine();

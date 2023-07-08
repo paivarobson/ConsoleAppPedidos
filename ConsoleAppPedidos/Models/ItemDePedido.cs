@@ -40,7 +40,7 @@ namespace ConsoleAppPedidos.Models
         /// </summary>
         [Required(ErrorMessage = "O campo Valor é obrigatório")]
         [Column(TypeName = "decimal(9,2)")]
-        public int Valor { get; set; }
+        public double Valor { get; set; }
 
         /// <summary>
         /// Pedido associado ao Item do Pedido.

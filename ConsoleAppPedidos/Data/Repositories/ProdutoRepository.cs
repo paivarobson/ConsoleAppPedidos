@@ -37,7 +37,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Método para carregar todos os produtos.
         /// </summary>
         /// <returns>Retorna todos os produtos. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
-        public IQueryable<Produto> CarregarProdutos()
+        public IQueryable<Produto> ConsultarProdutos()
         {
             return dbContexto.Produtos.AsQueryable();
         }
@@ -47,7 +47,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="produtoId">ID do produto.</param>
         /// <returns>Retorna o produto encontrado ou null se não encontrado.</returns>
-        public Produto CarregarProduto(int produtoId)
+        public Produto ConsultarProduto(int produtoId)
         {
             return dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
         }

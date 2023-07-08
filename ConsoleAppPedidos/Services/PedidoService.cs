@@ -4,6 +4,9 @@ using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
 {
+    /// <summary>
+    /// Classe responsável por realizar operações relacionadas a pedidos.
+    /// </summary>
     public class PedidoService
     {
         /// <summary>
@@ -221,14 +224,14 @@ namespace ConsoleAppPedidos.Services
 
                 var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-                //Exclui os itens associados ao pedido
+                // Exclui os itens associados ao pedido
                 var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
                 foreach (var item in itensDoPedido)
                 {
                     itemPedidoRepository.ExcluirItemDoPedido(item);
                 }
 
-                //Exclui o pedido
+                // Exclui o pedido
                 pedidoRepository.ExcluirPedido(pedidoEncontrado);
 
                 Console.WriteLine("Pedido excluído com sucesso.");

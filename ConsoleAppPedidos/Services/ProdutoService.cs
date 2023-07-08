@@ -1,12 +1,17 @@
-﻿using System;
-using ConsoleAppPedidos.Data;
+﻿using ConsoleAppPedidos.Data;
 using ConsoleAppPedidos.Data.Repositories;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
 {
+    /// <summary>
+    /// Classe responsável por realizar operações relacionadas a produtos.
+    /// </summary>
     public class ProdutoService
     {
+        /// <summary>
+        /// Cria um novo produto.
+        /// </summary>
         public void CriarProduto()
         {
             Console.WriteLine("Opção de criação de produto selecionada.");
@@ -53,12 +58,13 @@ namespace ConsoleAppPedidos.Services
         /// <summary>
         /// Consulta um produto pelo seu ID.
         /// </summary>
+        /// <param name="produtoId">ID do produto a ser consultado.</param>
         public void ConsultarProduto(int produtoId = 0)
         {
             using (var dbContexto = new DBContexto())
             {
                 var produtoRepository = new ProdutoRepository(dbContexto);
-                
+
                 string consultarNovoProduto;
 
                 do
@@ -91,6 +97,9 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
+        /// <summary>
+        /// Exclui um produto existente.
+        /// </summary>
         public void ExcluirProduto()
         {
             using (var dbContexto = new DBContexto())
@@ -134,10 +143,12 @@ namespace ConsoleAppPedidos.Services
                     excluirNovoProduto = Console.ReadLine();
 
                 } while (excluirNovoProduto.Equals("y"));
-
             }
         }
 
+        /// <summary>
+        /// Altera um produto existente.
+        /// </summary>
         public void AlterarProduto()
         {
             using (var dbContexto = new DBContexto())
@@ -207,4 +218,3 @@ namespace ConsoleAppPedidos.Services
         }
     }
 }
-

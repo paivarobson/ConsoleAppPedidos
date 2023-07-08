@@ -2,8 +2,14 @@
 
 namespace ConsoleAppPedidos
 {
+    /// <summary>
+    /// Classe responsável por exibir e gerenciar o menu principal do sistema.
+    /// </summary>
     public class MenuOpcoes
     {
+        /// <summary>
+        /// Exibe o menu principal e permite a seleção de opções.
+        /// </summary>
         public static void ExibirMenuPrincipal()
         {
             Console.WriteLine("MENU PRINCIPAL:");
@@ -40,6 +46,9 @@ namespace ConsoleAppPedidos
             ExibirMenuPrincipal();
         }
 
+        /// <summary>
+        /// Exibe o menu de opções relacionadas a pedidos e permite a seleção de opções.
+        /// </summary>
         private static void MenuPedido()
         {
             PedidoService pedidoService = new PedidoService();
@@ -90,6 +99,9 @@ namespace ConsoleAppPedidos
             MenuPedido();
         }
 
+        /// <summary>
+        /// Exibe o menu de opções relacionadas a produtos e permite a seleção de opções.
+        /// </summary>
         private static void MenuProduto()
         {
             ProdutoService produtoService = new ProdutoService();
@@ -141,4 +153,3 @@ namespace ConsoleAppPedidos
         }
     }
 }
-

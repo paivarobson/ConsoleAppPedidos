@@ -21,7 +21,7 @@ namespace ConsoleAppPedidos.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ConsoleAppPedidos.Models.ItensDePedido", b =>
+            modelBuilder.Entity("ConsoleAppPedidos.Models.ItemDoPedido", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -42,6 +42,10 @@ namespace ConsoleAppPedidos.Migrations
                         .HasColumnType("decimal(9,2)");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("PedidoID");
+
+                    b.HasIndex("ProdutoID");
 
                     b.ToTable("ItensDePedido");
                 });
@@ -90,6 +94,25 @@ namespace ConsoleAppPedidos.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("Produtos");
+                });
+
+            modelBuilder.Entity("ConsoleAppPedidos.Models.ItemDoPedido", b =>
+                {
+                    b.HasOne("ConsoleAppPedidos.Models.Pedido", "Pedido")
+                        .WithMany()
+                        .HasForeignKey("PedidoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ConsoleAppPedidos.Models.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pedido");
+
+                    b.Navigation("Produto");
                 });
 #pragma warning restore 612, 618
         }

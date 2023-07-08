@@ -12,11 +12,13 @@
     <None Remove="Data\" />
     <None Remove="ConsoleAppPedidos.csproj" />
     <None Remove="Data\Repositories\" />
+    <None Remove="Data\Context\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Data\" />
     <Folder Include="Data\Repositories\" />
+    <Folder Include="Data\Context\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">

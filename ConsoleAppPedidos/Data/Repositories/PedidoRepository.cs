@@ -5,7 +5,7 @@ namespace ConsoleAppPedidos.Data.Repositories
     /// <summary>
     /// Classe repositório para manipulação de dados da entidade Pedido.
     /// </summary>
-    public class PedidoRepositories
+    public class PedidoRepository
     {
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os pedidos.
@@ -16,7 +16,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Construtor da classe PedidoRepositories.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
-        public PedidoRepositories(DBContexto dbContexto)
+        public PedidoRepository(DBContexto dbContexto)
         {
             this.dbContexto = dbContexto;
         }

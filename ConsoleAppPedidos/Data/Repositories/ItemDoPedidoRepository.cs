@@ -3,7 +3,7 @@ using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Data.Repositories
 {
-    public class ItemDoPedidoRepositories
+    public class ItemDoPedidoRepository
     {
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
@@ -14,7 +14,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Construtor da classe ItemDoPedidoRepositories.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
-        public ItemDoPedidoRepositories(DBContexto dbContexto)
+        public ItemDoPedidoRepository(DBContexto dbContexto)
         {
             this.dbContexto = dbContexto;
         }

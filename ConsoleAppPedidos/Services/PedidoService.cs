@@ -6,6 +6,9 @@ namespace ConsoleAppPedidos.Services
 {
     public class PedidoService
     {
+        /// <summary>
+        /// Cria um novo pedido.
+        /// </summary>
         public void CriarPedido()
         {
             Console.WriteLine("Opção de criação de pedido selecionada.");
@@ -18,15 +21,19 @@ namespace ConsoleAppPedidos.Services
                 Console.WriteLine("###################################");
                 Console.WriteLine("       Criando novo pedido...      ");
                 Console.WriteLine("###################################");
+
+                // Gera o identificador do pedido e define a descrição padrão
                 string identificador = pedidoRepository.GerarIdentificadorDoPedido();
                 string descricao = "Descrição padrão";
 
+                // Cria uma nova instância do pedido
                 var novoPedido = new Pedido
                 {
                     Identificador = identificador,
                     Descricao = descricao
                 };
 
+                // Cria o pedido no repositório
                 pedidoRepository.CriarPedido(novoPedido);
 
                 string adicionarNovoItem;
@@ -41,6 +48,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Valor Unitário: ");
                     double valorUnitario = double.Parse(Console.ReadLine());
 
+                    // Cria um novo item do pedido
                     novoItem = new ItemDoPedido
                     {
                         ProdutoID = produtoId,
@@ -48,6 +56,7 @@ namespace ConsoleAppPedidos.Services
                         Valor = valorUnitario
                     };
 
+                    // Adiciona o item ao pedido no repositório
                     itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
 
                     Console.Write("Deseja adicionar novo item? (y/n):");
@@ -55,8 +64,10 @@ namespace ConsoleAppPedidos.Services
 
                 } while (adicionarNovoItem.Equals("y"));
 
+                // Calcula o valor total do pedido
                 novoPedido.ValorTotal = pedidoRepository.CalcularValorTotal(novoPedido.ID);
 
+                // Salva as alterações no banco de dados
                 dbContexto.SaveChanges();
 
                 Console.WriteLine("###################################");
@@ -67,6 +78,10 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
+        /// <summary>
+        /// Consulta um pedido pelo seu ID.
+        /// </summary>
+        /// <param name="pedidoId">ID do pedido a ser consultado.</param>
         public void ConsultarPedido(int pedidoId = 0)
         {
             using (var dbContexto = new DBContexto())
@@ -122,24 +137,19 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja consultar novo pedido? (y/n):");
                     consultarNovoPedido = Console.ReadLine();
 
-                    } while (consultarNovoPedido.Equals("y"));             
-            }
-
-            string CarregarCategoriaProduto(int categoriaId)
-            {
-                if (categoriaId == 0)
-                    return "Perecível";
-                else
-                    return "Não perecível";
+                } while (consultarNovoPedido.Equals("y"));
             }
         }
 
+        /// <summary>
+        /// Altera um pedido existente.
+        /// </summary>
         public void AlterarPedido()
         {
             using (var dbContexto = new DBContexto())
             {
-                PedidoRepository pedidoRepository = new PedidoRepository(dbContexto);
-                ItemDoPedidoRepository itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
+                var pedidoRepository = new PedidoRepository(dbContexto);
+                var itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
 
                 Console.WriteLine("Opção de atualização de pedido selecionada.");
 
@@ -170,12 +180,15 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
+        /// <summary>
+        /// Exclui um pedido existente.
+        /// </summary>
         public void ExcluirPedido()
         {
             using (var dbContexto = new DBContexto())
             {
-                PedidoRepository pedidoRepository = new PedidoRepository(dbContexto);
-                ItemDoPedidoRepository itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
+                var pedidoRepository = new PedidoRepository(dbContexto);
+                var itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
 
                 Console.WriteLine("Opção de exclusão de pedido selecionada.");
                 Console.WriteLine("Digite o código do pedido:");
@@ -186,6 +199,18 @@ namespace ConsoleAppPedidos.Services
                 pedidoRepository.ExcluirPedido(pedidoEncontrado);
             }
         }
+
+        /// <summary>
+        /// Carrega a categoria do produto com base no seu ID.
+        /// </summary>
+        /// <param name="categoriaId">ID da categoria do produto.</param>
+        /// <returns>Nome da categoria do produto.</returns>
+        private string CarregarCategoriaProduto(int categoriaId)
+        {
+            if (categoriaId == 0)
+                return "Perecível";
+            else
+                return "Não perecível";
+        }
     }
 }
-

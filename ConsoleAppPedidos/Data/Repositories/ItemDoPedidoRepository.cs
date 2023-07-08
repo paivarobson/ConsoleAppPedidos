@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Data.Repositories
@@ -17,6 +18,15 @@ namespace ConsoleAppPedidos.Data.Repositories
         public ItemDoPedidoRepository(DBContexto dbContexto)
         {
             this.dbContexto = dbContexto;
+        }
+
+        /// <summary>
+        /// Método para consultar todos os itens do pedido.
+        /// </summary>
+        /// <returns>Retorna todos os itens do pedido solicitado. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
+        public IQueryable<ItemDoPedido> ConsultarItensDoPedido(int pedidoId)
+        {
+            return dbContexto.ItensDePedido.Where(i => i.PedidoID == pedidoId).AsQueryable();
         }
 
         /// <summary>

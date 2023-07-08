@@ -1,3 +1,15 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System;
+using ConsoleAppPedidos.Data;
+using ConsoleAppPedidos.Data.Repositories;
+using ConsoleAppPedidos.Models;
 
+namespace ConsoleAppPedidos
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            MenuOpcoes.ExibirMenuPrincipal();           
+        }
+    }
+}

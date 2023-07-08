@@ -26,7 +26,7 @@ namespace ConsoleAppPedidos.Services
                 {
                     Console.Write("Descrição do Produto: ");
                     string nome = Console.ReadLine();
-                    Console.Write("Categoria (0 ou 1):");
+                    Console.Write("Categoria (0 - Perecível) ou 1 - Não perecível):");
                     int categoria = int.Parse(Console.ReadLine());
 
                     novoProduto = new Produto
@@ -96,16 +96,45 @@ namespace ConsoleAppPedidos.Services
             using (var dbContexto = new DBContexto())
             {
                 var produtoRepository = new ProdutoRepository(dbContexto);
+                var itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
 
                 Console.WriteLine("Opção de exclusão do produto selecionado.");
-                Console.WriteLine("Digite o código do produto:");
-                int produtoId = int.Parse(Console.ReadLine());
 
-                var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
+                string excluirNovoProduto = "n";
 
-                produtoRepository.ExcluirProduto(produtoEncontrado);
+                do
+                {
+                    Console.WriteLine("Digite o código do produto:");
+                    int produtoId = int.Parse(Console.ReadLine());
 
-                Console.WriteLine("Produto excluído com sucesso.");
+                    bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
+
+                    if (!produtoAssociadoAoPedido)
+                    {
+                        Console.Clear();
+                        var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
+
+                        if (produtoEncontrado != null)
+                        {
+                            produtoRepository.ExcluirProduto(produtoEncontrado);
+
+                            Console.WriteLine("Produto excluído com sucesso.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Produto não encontrado.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Produto não pode ser excluído pois está associado a um pedido.");
+                    }
+
+                    Console.WriteLine("Deseja excluir novo produto? (y/n)");
+                    excluirNovoProduto = Console.ReadLine();
+
+                } while (excluirNovoProduto.Equals("y"));
+
             }
         }
 
@@ -114,46 +143,66 @@ namespace ConsoleAppPedidos.Services
             using (var dbContexto = new DBContexto())
             {
                 var produtoRepository = new ProdutoRepository(dbContexto);
-
-                var pedidoRepository = new PedidoRepository(dbContexto);
                 var itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
 
                 Console.WriteLine("Opção de atualização do produto selecionado.");
 
-                Console.WriteLine("Digite o código do produto:");
-                int produtoId = int.Parse(Console.ReadLine());
+                string alterarNovoProduto = "n";
 
-                bool produtoComPedido = itemPedidoRepository.ConsultarTodosItensDePedido().AsQueryable().Any(i => i.ProdutoID == produtoId);
-
-                if (!produtoComPedido)
+                do
                 {
-                    Console.Clear();
-                    ConsultarProduto(produtoId);
+                    Console.WriteLine("Digite o código do produto:");
+                    int produtoId = int.Parse(Console.ReadLine());
 
-                    Console.WriteLine("Digite o novo Identificador:");
-                    string identificador = Console.ReadLine();
-                    Console.WriteLine("Digite a nova descrição:");
-                    string descricao = Console.ReadLine();
-                    Console.WriteLine("Digite o valor total:");
-                    double valorTotal = int.Parse(Console.ReadLine());
+                    bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
 
-                    var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
-
-                    var produto = new Produto
+                    if (!produtoAssociadoAoPedido)
                     {
-                        ID = produtoEncontrado.ID,
-                        Nome = produtoEncontrado.Nome,
-                        Categoria = produtoEncontrado.Categoria
-                    };
+                        Console.Clear();
 
-                    produtoRepository.AlterarProduto(produto);
+                        var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
 
-                    Console.WriteLine("Produto alterado com sucesso.");
-                }
-                else
-                {
-                    Console.WriteLine("Alteração não permitida. Categoria de produto presente em pedido.");
-                }
+                        if (produtoEncontrado != null)
+                        {
+                            ConsultarProduto(produtoId);
+
+                            Console.WriteLine("Digite a nova descrição:");
+                            string descricao = Console.ReadLine();
+                            Console.WriteLine("Digite a nova categoria (0 - Perecível) ou 1 - Não perecível):");
+                            int categoria = int.Parse(Console.ReadLine());
+
+                            produtoEncontrado = new Produto
+                            {
+                                ID = produtoEncontrado.ID,
+                                Nome = descricao,
+                                Categoria = categoria
+                            };
+
+                            bool alteradoComSucesso = produtoRepository.AlterarProduto(produtoEncontrado);
+
+                            if (alteradoComSucesso)
+                            {
+                                Console.WriteLine("Produto alterado com sucesso.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Falha na alteração do produto.");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Produto não localizado.");
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Alteração não permitida. Categoria de produto presente em pedido.");
+                    }
+
+                    Console.WriteLine("Deseja alterar novo produto? (y/n)");
+                    alterarNovoProduto = Console.ReadLine();
+
+                } while (alterarNovoProduto.Equals("y"));
             }
         }
     }

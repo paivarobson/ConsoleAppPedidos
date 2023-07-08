@@ -13,9 +13,9 @@
         public static string CarregarCategoriaProduto(int categoriaId)
         {
             if (categoriaId == 0)
-                return "Perecível";
+                return "0 - Perecível";
             else
-                return "Não perecível";
+                return "1 - Não perecível";
         }
     }
 }

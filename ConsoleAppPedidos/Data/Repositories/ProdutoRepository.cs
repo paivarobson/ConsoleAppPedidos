@@ -56,7 +56,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Método para alterar um produto existente.
         /// </summary>
         /// <param name="produto">Retorna o produto com as alterações.</param>
-        public void AlterarProduto(Produto produto)
+        public bool AlterarProduto(Produto produto)
         {
             var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produto.ID);
 
@@ -66,7 +66,11 @@ namespace ConsoleAppPedidos.Data.Repositories
                 produtoEncontrado.Categoria = produto.Categoria;
 
                 dbContexto.SaveChanges();
+
+                return true;
             }
+
+            return false;
         }
 
         /// <summary>

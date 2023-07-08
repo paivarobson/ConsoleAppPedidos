@@ -1,5 +1,4 @@
-﻿using System;
-using ConsoleAppPedidos.Services;
+﻿using ConsoleAppPedidos.Services;
 
 namespace ConsoleAppPedidos
 {

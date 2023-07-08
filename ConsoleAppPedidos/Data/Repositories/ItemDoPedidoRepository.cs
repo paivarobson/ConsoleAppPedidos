@@ -89,6 +89,16 @@ namespace ConsoleAppPedidos.Data.Repositories
 
             dbContexto.SaveChanges();
         }
+
+        /// <summary>
+        /// Método para verificar se um produto está associado a algum pedido.v
+        /// </summary>
+        /// <param name="produtoId">O ID do produto a ser verificado.</param>
+        /// <returns>Retorna True se o produto estiver associado a algum pedido, False caso contrário.</returns>
+        public bool ProdutoAssociadoPedido(int produtoId)
+        {
+            return dbContexto.ItensDePedido.Any(i => i.ProdutoID == produtoId);
+        }
     }
 }
 

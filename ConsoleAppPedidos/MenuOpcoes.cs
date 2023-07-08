@@ -93,6 +93,8 @@ namespace ConsoleAppPedidos
 
         private static void MenuProduto()
         {
+            ProdutoService produtoService = new ProdutoService();
+
             Console.WriteLine("Opções do CRUD:");
             Console.WriteLine("1. Criar um novo produto");
             Console.WriteLine("2. Consultar um produto existente");
@@ -109,16 +111,16 @@ namespace ConsoleAppPedidos
             switch (opcao)
             {
                 case "1":
-                    CriarProduto();
+                    produtoService.CriarProduto();
                     break;
                 case "2":
-                    ConsultarProduto();
+                    produtoService.ConsultarProduto();
                     break;
                 case "3":
-                    AlterarProduto();
+                    produtoService.AlterarProduto();
                     break;
                 case "4":
-                    ExcluirProduto();
+                    produtoService.ExcluirProduto();
                     break;
                 case "9":
                     ExibirMenuPrincipal();
@@ -138,32 +140,6 @@ namespace ConsoleAppPedidos
 
             MenuProduto();
         }
-
-        private static void ExcluirProduto()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void AlterarProduto()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void ConsultarProduto()
-        {
-            throw new NotImplementedException();
-        }
-
-        private static void CriarProduto()
-        {
-            throw new NotImplementedException();
-        }
-
-        public static void ExibirOpcoesMenu()
-        {
-            
-        }
-
     }
 }
 

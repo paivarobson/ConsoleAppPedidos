@@ -30,6 +30,15 @@ namespace ConsoleAppPedidos.Data.Repositories
         }
 
         /// <summary>
+        /// Método para consultar todos os itens de pedido.
+        /// </summary>
+        /// <returns>Retorna todos os itens de pedido. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
+        public IQueryable<ItemDoPedido> ConsultarTodosItensDePedido()
+        {
+            return dbContexto.ItensDePedido.AsQueryable();
+        }
+
+        /// <summary>
         /// Método para adicionar um novo item ao pedido.
         /// </summary>
         /// <param name="pedidoId">ID do pedido.</param>

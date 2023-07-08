@@ -24,7 +24,8 @@ namespace ConsoleAppPedidos.Services
 
                 // Gera o identificador do pedido e define a descrição padrão
                 string identificador = pedidoRepository.GerarIdentificadorDoPedido();
-                string descricao = "Descrição padrão";
+                Console.Write("Descrição: ");
+                string descricao = Console.ReadLine();
 
                 // Cria uma nova instância do pedido
                 var novoPedido = new Pedido
@@ -123,7 +124,7 @@ namespace ConsoleAppPedidos.Services
                         Console.Write($"    Item : 00{contador}\n");
                         Console.Write($"### Cod. Produto: {item.ProdutoID}\n");
                         Console.Write($"### Produto: {item.Produto.Nome}\n");
-                        Console.Write($"### Categoria: {CarregarCategoriaProduto(produto.Categoria)}\n");
+                        Console.Write($"### Categoria: {HelpTools.CarregarCategoriaProduto(produto.Categoria)}\n");
                         Console.Write($"### Qtd: {item.Quantidade}\n");
                         Console.Write($"### Vlr. Unit.: {item.Valor}\n");
 
@@ -177,11 +178,13 @@ namespace ConsoleAppPedidos.Services
                 };
 
                 pedidoRepository.AlterarPedido(pedido);
+
+                Console.WriteLine("Pedido alterado com sucesso.");
             }
         }
 
         /// <summary>
-        /// Exclui um pedido existente.
+        /// Exclui um pedido existente e seus itens associados.
         /// </summary>
         public void ExcluirPedido()
         {
@@ -196,21 +199,18 @@ namespace ConsoleAppPedidos.Services
 
                 var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-                pedidoRepository.ExcluirPedido(pedidoEncontrado);
-            }
-        }
+                //Exclui os itens associados ao pedido
+                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+                foreach (var item in itensDoPedido)
+                {
+                    itemPedidoRepository.ExcluirItemDoPedido(item);
+                }
 
-        /// <summary>
-        /// Carrega a categoria do produto com base no seu ID.
-        /// </summary>
-        /// <param name="categoriaId">ID da categoria do produto.</param>
-        /// <returns>Nome da categoria do produto.</returns>
-        private string CarregarCategoriaProduto(int categoriaId)
-        {
-            if (categoriaId == 0)
-                return "Perecível";
-            else
-                return "Não perecível";
+                //Exclui o pedido
+                pedidoRepository.ExcluirPedido(pedidoEncontrado);
+
+                Console.WriteLine("Pedido excluído com sucesso.");
+            }
         }
     }
 }

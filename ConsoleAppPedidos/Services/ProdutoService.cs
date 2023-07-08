@@ -146,7 +146,7 @@ namespace ConsoleAppPedidos.Services
                     Console.WriteLine("Produto não pode ser excluído pois está associado a um pedido.");
                 }
 
-                Console.WriteLine("Deseja excluir novo produto? (y/n)");
+                Console.WriteLine("Deseja excluir outro produto? (y/n)");
                 excluirNovoProduto = Console.ReadLine();
 
             } while (excluirNovoProduto.Equals("y"));

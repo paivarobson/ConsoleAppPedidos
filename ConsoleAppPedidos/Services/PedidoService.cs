@@ -82,9 +82,14 @@ namespace ConsoleAppPedidos.Services
 
                 bool itemExistenteNoPedido = itemPedidoRepository.ConsultarItensDoPedido(novoPedido.ID).Any(i => i.ProdutoID == produtoId);
 
+                var produtoExiste = produtoRepository.ConsultarProduto(produtoId);
+
                 if (!itemExistenteNoPedido)
                 {
-                    itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                    if (produtoExiste != null)
+                        itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                    else
+                        Console.WriteLine("Produto não cadastrado.");
                 }
                 else
                 {
@@ -216,15 +221,23 @@ namespace ConsoleAppPedidos.Services
 
             var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-            var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
-            foreach (var item in itensDoPedido)
+            if (pedidoEncontrado != null)
             {
-                itemPedidoRepository.ExcluirItemDoPedido(item);
+                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+
+                pedidoRepository.ExcluirPedido(pedidoEncontrado);
+
+                foreach (var item in itensDoPedido)
+                {
+                    itemPedidoRepository.ExcluirItemDoPedido(item);
+                }
+
+                Console.WriteLine("Pedido excluído com sucesso.");
             }
-
-            pedidoRepository.ExcluirPedido(pedidoEncontrado);
-
-            Console.WriteLine("Pedido excluído com sucesso.");
+            else
+            {
+                Console.WriteLine("Pedido não localizado.");
+            }
         }
     }
 }

@@ -28,16 +28,16 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="pedidoId">ID do pedido.</param>
         /// <returns>Retorna todos os itens do pedido solicitado. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao consultar os itens do pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra um erro ao consultar os itens do pedido.</exception>
         public IQueryable<ItemDoPedido> ConsultarItensDoPedido(int pedidoId)
         {
             try
             {
                 return dbContexto.ItensDePedido.Where(i => i.PedidoID == pedidoId).AsQueryable();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar os itens do pedido.", ex);
+                throw new Exception("Ocorreu um erro ao consultar os itens do pedido.", ex);
             }
         }
 
@@ -45,16 +45,16 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta todos os itens de pedido.
         /// </summary>
         /// <returns>Retorna todos os itens de pedido. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao consultar todos os itens de pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra um erro ao consultar todos os itens de pedido.</exception>
         public IQueryable<ItemDoPedido> ConsultarTodosItensDePedido()
         {
             try
             {
                 return dbContexto.ItensDePedido.AsQueryable();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar todos os itens de pedido.", ex);
+                throw new Exception("Ocorreu um erro ao consultar todos os itens de pedido.", ex);
             }
         }
 
@@ -66,7 +66,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// <exception cref="ArgumentNullException">Exceção lançada caso o novoItem seja nulo.</exception>
         /// <exception cref="ArgumentException">Exceção lançada caso o pedido não exista ou caso já exista um item com o mesmo ID.</exception>
         /// <exception cref="InvalidOperationException">Exceção lançada caso ocorra uma operação inválida, como adicionar um item duplicado.</exception>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao adicionar o item ao pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra um erro ao adicionar o item ao pedido.</exception>
         public void AdicionarItemAoPedido(int pedidoId, ItemDoPedido novoItem)
         {
             try
@@ -92,9 +92,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.ItensDePedido.Add(novoItem);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao adicionar o item ao pedido.", ex);
+                throw new Exception("Ocorreu um erro ao adicionar o item ao pedido.", ex);
             }
         }
 
@@ -106,7 +106,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// <param name="itemDePedidoAtualizado">Item do pedido atualizado.</param>
         /// <exception cref="ArgumentNullException">Exceção lançada caso o itemDePedidoAtualizado seja nulo.</exception>
         /// <exception cref="ArgumentException">Exceção lançada caso o item do pedido não exista ou não esteja associado ao pedido especificado.</exception>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra algum erro ao alterar o item do pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra algum erro ao alterar o item do pedido.</exception>
         public void AlterarItemDoPedido(int pedidoId, int itemDePedidoId, ItemDoPedido itemDePedidoAtualizado)
         {
             try
@@ -125,9 +125,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao alterar o item do pedido.", ex);
+                throw new Exception("Ocorreu um erro ao alterar o item do pedido.", ex);
             }
         }
 
@@ -136,7 +136,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="itemDoPedido">Item do pedido a ser excluído.</param>
         /// <exception cref="ArgumentNullException">Exceção lançada caso o itemDoPedido seja nulo.</exception>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao excluir o item do pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra um erro ao excluir o item do pedido.</exception>
         public void ExcluirItemDoPedido(ItemDoPedido itemDoPedido)
         {
             try
@@ -149,9 +149,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.ItensDePedido.Remove(itemDoPedido);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao excluir o item do pedido.", ex);
+                throw new Exception("Ocorreu um erro ao excluir o item do pedido.", ex);
             }
         }
 
@@ -160,16 +160,16 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="produtoId">ID do produto a ser verificado.</param>
         /// <returns>True se o produto está associado a algum pedido, False caso contrário.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao verificar se o produto está associado a algum pedido.</exception>
+        /// <exception cref="Exception">Exceção lançada caso ocorra um erro ao verificar se o produto está associado a algum pedido.</exception>
         public bool ProdutoAssociadoPedido(int produtoId)
         {
             try
             {
                 return dbContexto.ItensDePedido.Any(i => i.ProdutoID == produtoId);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao verificar se o produto está associado a algum pedido.", ex);
+                throw new Exception("Ocorreu um erro ao verificar se o produto está associado a algum pedido.", ex);
             }
         }
     }

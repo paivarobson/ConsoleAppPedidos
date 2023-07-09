@@ -114,7 +114,7 @@ namespace ConsoleAppPedidos.Services
 
                 ConsultarPedido(novoPedido.ID);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao criar o pedido: " + ex.Message);
             }
@@ -177,7 +177,7 @@ namespace ConsoleAppPedidos.Services
                         Console.WriteLine("Pedido não localizado.");
                     }
                 }
-                catch (DbUpdateException ex)
+                catch (Exception ex)
                 {
                     Console.WriteLine($"Ocorreu um erro ao consultar o pedido: {ex.Message}");
                 }
@@ -226,7 +226,7 @@ namespace ConsoleAppPedidos.Services
 
 	            Console.WriteLine("Pedido alterado com sucesso.");
 	        }
-	        catch (DbUpdateException ex)
+	        catch (Exception ex)
 	        {
 	            Console.WriteLine("Ocorreu um erro ao alterar o pedido: " + ex.Message);
 	        }
@@ -263,7 +263,7 @@ namespace ConsoleAppPedidos.Services
 	                Console.WriteLine("Pedido não localizado.");
 	            }
 	        }
-	        catch (DbUpdateException ex)
+	        catch (Exception ex)
 	        {
 	            Console.WriteLine("Ocorreu um erro ao excluir o pedido: " + ex.Message);
 	        }
@@ -273,7 +273,7 @@ namespace ConsoleAppPedidos.Services
         /// Gera um identificador único para um novo pedido no formato "P_[letra, seguida de 3 números]_C".
         /// </summary>
         /// <returns>O identificador gerado para o novo pedido.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
         public string GerarIdentificadorDoPedido()
         {
             try
@@ -311,9 +311,13 @@ namespace ConsoleAppPedidos.Services
 
                 return proximoIdentificador;
             }
-            catch (DbUpdateException ex)
+            catch (InvalidOperationException ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao gerar o identificador do pedido.", ex);
+                throw new InvalidOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao gerar o identificador do pedido.", ex);
             }
         }
 
@@ -322,7 +326,7 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         /// <param name="pedidoId">O ID do pedido.</param>
         /// <returns>O valor total do pedido.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
 		public double CalcularValorTotal(int pedidoId)
         {
             try
@@ -340,9 +344,9 @@ namespace ConsoleAppPedidos.Services
 
                 return 0.0;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao calcular o valor total do pedido no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao calcular o valor total do pedido no banco de dados.", ex);
             }
         }
     }

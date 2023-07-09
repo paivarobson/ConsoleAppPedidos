@@ -27,7 +27,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Cria um novo pedido.
         /// </summary>
         /// <param name="pedido">O pedido a ser criado.</param>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao criar o pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao criar o pedido no banco de dados.</exception>
         public void CriarPedido(Pedido pedido)
         {
             try
@@ -35,9 +35,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Pedidos.Add(pedido);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao criar o pedido no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao criar o pedido no banco de dados.", ex);
             }
         }
 
@@ -55,7 +55,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="pedidoId">O ID do pedido.</param>
         /// <returns>O pedido encontrado ou null se não encontrado.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao consultar o pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao consultar o pedido no banco de dados.</exception>
         public Pedido ConsultarPedido(int pedidoId)
         {
             try
@@ -68,9 +68,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 return pedidoEncontrado;
 
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar o pedido no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao consultar o pedido no banco de dados.", ex);
             }
         }
 
@@ -78,7 +78,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Altera um pedido existente.
         /// </summary>
         /// <param name="pedido">O pedido com as alterações.</param>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao alterar o pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao alterar o pedido no banco de dados.</exception>
         public void AlterarPedido(Pedido pedido)
         {
             try
@@ -91,9 +91,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Entry(pedidoEncontrado).CurrentValues.SetValues(pedido);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao alterar o pedido no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao alterar o pedido no banco de dados.", ex);
             }
         }
 
@@ -101,7 +101,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Exclui um pedido.
         /// </summary>
         /// <param name="pedido">O pedido a ser excluído.</param>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao excluir o pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao excluir o pedido no banco de dados.</exception>
         public void ExcluirPedido(Pedido pedido)
         {
             try
@@ -114,9 +114,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Pedidos.Remove(pedidoEncontrado);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao excluir o pedido no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao excluir o pedido no banco de dados.", ex);
             }
         }
 
@@ -124,7 +124,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta o último pedido cadastrado.
         /// </summary>
         /// <returns>O último pedido cadastrado ou null se não houver pedidos.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao consultar o último pedido no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao consultar o último pedido no banco de dados.</exception>
         public Pedido ConsultarUltimoPedido()
         {
             try
@@ -136,9 +136,9 @@ namespace ConsoleAppPedidos.Data.Repositories
 
                 return ultimoPedido;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar o último pedido.", ex);
+                throw new Exception("Ocorreu um erro ao consultar o último pedido.", ex);
             }
         }
     }

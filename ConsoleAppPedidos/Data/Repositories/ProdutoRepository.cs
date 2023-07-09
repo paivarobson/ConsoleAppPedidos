@@ -27,7 +27,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Cria um novo produto.
         /// </summary>
         /// <param name="produto">O produto a ser criado.</param>
-        /// <exception cref="DbUpdateException">Ocorre quando há um erro ao criar o produto no banco de dados.</exception>
+        /// <exception cref="Exception">Ocorre quando há um erro ao criar o produto no banco de dados.</exception>
         public void CriarProduto(Produto produto)
         {
             try
@@ -35,9 +35,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Produtos.Add(produto);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao criar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao criar o produto no banco de dados.", ex);
             }
         }
 
@@ -45,7 +45,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta todos os produtos.
         /// </summary>
         /// <returns>Uma lista de produtos.</returns>
-        /// <exception cref="DbUpdateException">Ocorre quando há um erro ao consultar os produtos no banco de dados.</exception>
+        /// <exception cref="Exception">Ocorre quando há um erro ao consultar os produtos no banco de dados.</exception>
         public IQueryable<Produto> ConsultarProdutos()
         {
             try
@@ -57,9 +57,9 @@ namespace ConsoleAppPedidos.Data.Repositories
 
                 return produtosEncontrados;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar os produtos no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao consultar os produtos no banco de dados.", ex);
             }
         }
 
@@ -68,7 +68,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="produtoId">O ID do produto.</param>
         /// <returns>O produto encontrado ou null se não encontrado.</returns>
-        /// <exception cref="DbUpdateException">Ocorre quando há um erro ao consultar o produto no banco de dados.</exception>
+        /// <exception cref="Exception">Ocorre quando há um erro ao consultar o produto no banco de dados.</exception>
         public Produto ConsultarProduto(int produtoId)
         {
             try
@@ -80,9 +80,9 @@ namespace ConsoleAppPedidos.Data.Repositories
 
                 return produtoEncontrado;
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao consultar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao consultar o produto no banco de dados.", ex);
             }
         }
 
@@ -91,7 +91,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="produto">O produto com as alterações.</param>
         /// <returns>True se o produto foi alterado com sucesso, False caso contrário.</returns>
-        /// <exception cref="DbUpdateException">Ocorre quando há um erro ao alterar o produto no banco de dados.</exception>
+        /// <exception cref="Exception">Ocorre quando há um erro ao alterar o produto no banco de dados.</exception>
         public bool AlterarProduto(Produto produto)
         {
             try
@@ -111,9 +111,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 return produtoAlterado;
 
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao alterar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao alterar o produto no banco de dados.", ex);
             }
         }
 
@@ -121,7 +121,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Exclui um produto.
         /// </summary>
         /// <param name="produto">O produto a ser excluído.</param>
-        /// <exception cref="DbUpdateException">Ocorre quando há um erro ao excluir o produto no banco de dados.</exception>
+        /// <exception cref="Exception">Ocorre quando há um erro ao excluir o produto no banco de dados.</exception>
         public void ExcluirProduto(Produto produto)
         {
             try
@@ -129,9 +129,9 @@ namespace ConsoleAppPedidos.Data.Repositories
                 dbContexto.Produtos.Remove(produto);
                 dbContexto.SaveChanges();
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao excluir o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao excluir o produto no banco de dados.", ex);
             }
         }
     }

@@ -66,7 +66,7 @@ namespace ConsoleAppPedidos.Services
 
                 ConsultarProduto(novoProduto.ID);
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao criar o produto: " + ex.Message);
             }
@@ -118,7 +118,7 @@ namespace ConsoleAppPedidos.Services
 
                 } while (consultarNovoProduto.Equals("y"));
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao consultar o produto: " + ex.Message);
             }
@@ -168,7 +168,7 @@ namespace ConsoleAppPedidos.Services
 
                 } while (excluirNovoProduto.Equals("y"));
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao excluir o produto: " + ex.Message);
             }
@@ -240,7 +240,7 @@ namespace ConsoleAppPedidos.Services
 
                 } while (alterarNovoProduto.Equals("y"));
             }
-            catch (DbUpdateException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao alterar o produto: " + ex.Message);
             }

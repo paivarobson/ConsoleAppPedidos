@@ -55,9 +55,10 @@ namespace ConsoleAppPedidos
             {
                 Console.WriteLine("Opções do CRUD:");
                 Console.WriteLine("1. Criar um novo pedido");
-                Console.WriteLine("2. Consultar um pedido existente");
-                Console.WriteLine("3. Alterar um pedido existente");
-                Console.WriteLine("4. Excluir um pedido existente");
+                Console.WriteLine("2. Consultar todos os pedidos");
+                Console.WriteLine("3. Consultar um pedido existente");
+                Console.WriteLine("4. Alterar um pedido existente");
+                Console.WriteLine("5. Excluir um pedido existente");
                 Console.WriteLine("9. Voltar ao MENU PRINCIPAL");
                 Console.WriteLine("0. Sair");
 
@@ -72,12 +73,15 @@ namespace ConsoleAppPedidos
                         pedidoService.CriarPedido();
                         break;
                     case "2":
-                        pedidoService.ConsultarPedido();
+                        pedidoService.ConsultarTodosPedidos();
                         break;
                     case "3":
-                        pedidoService.AlterarPedido();
+                        pedidoService.ConsultarPedido();
                         break;
                     case "4":
+                        pedidoService.AlterarPedido();
+                        break;
+                    case "5":
                         pedidoService.ExcluirPedido();
                         break;
                     case "9":
@@ -105,9 +109,10 @@ namespace ConsoleAppPedidos
             {
                 Console.WriteLine("Opções do CRUD:");
                 Console.WriteLine("1. Criar um novo produto");
-                Console.WriteLine("2. Consultar um produto existente");
-                Console.WriteLine("3. Alterar um produto existente");
-                Console.WriteLine("4. Excluir um produto existente");
+                Console.WriteLine("2. Consultar todos os produtos");
+                Console.WriteLine("3. Consultar um produto existente");
+                Console.WriteLine("4. Alterar um produto existente");
+                Console.WriteLine("5. Excluir um produto existente");
                 Console.WriteLine("9. Voltar ao MENU PRINCIPAL");
                 Console.WriteLine("0. Sair");
 
@@ -122,12 +127,15 @@ namespace ConsoleAppPedidos
                         produtoService.CriarProduto();
                         break;
                     case "2":
-                        produtoService.ConsultarProduto();
+                        produtoService.ConsultarTodosProdutos();
                         break;
                     case "3":
-                        produtoService.AlterarProduto();
+                        produtoService.ConsultarProduto();
                         break;
                     case "4":
+                        produtoService.AlterarProduto();
+                        break;
+                    case "5":
                         produtoService.ExcluirProduto();
                         break;
                     case "9":

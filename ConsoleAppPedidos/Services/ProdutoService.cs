@@ -72,6 +72,24 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
+        internal void ConsultarTodosProdutos()
+        {
+            try
+            {
+                var produtos = produtoRepository.ConsultarTodosProdutos();
+
+                ImprimirTodosProdutos(produtos);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao consultar todos os produtos: " + ex.Message);
+            }
+        }
+
         /// <summary>
         /// Consulta um produto pelo seu ID.
         /// </summary>
@@ -92,24 +110,7 @@ namespace ConsoleAppPedidos.Services
                         produtoId = int.Parse(Console.ReadLine());
                     }
 
-                    var produto = produtoRepository.ConsultarProduto(produtoId);
-
-                    if (produto != null)
-                    {
-                        Console.WriteLine("###################################");
-
-                        Console.Write(
-                            $"Cód. Produto: {produto.ID} | " +
-                            $"Descrição: {produto.Nome} | " +
-                            $"Categoria: {AppUtils.CarregarCategoriaProduto(produtoId)}\n");
-
-                        Console.WriteLine("###################################");
-
-                    }
-                    else
-                    {
-                        Console.WriteLine("Produto não localizado.");
-                    }
+                    ImprimirProduto(produtoId);
 
                     Console.Write("Deseja consultar novo produto? (y/n):");
                     consultarNovoProduto = Console.ReadLine();
@@ -198,36 +199,30 @@ namespace ConsoleAppPedidos.Services
 
                         var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
 
-                        if (produtoEncontrado != null)
+                        ImprimirProduto(produtoId);
+
+                        Console.WriteLine("Digite a nova descrição:");
+                        string descricao = Console.ReadLine();
+                        Console.WriteLine("Digite a nova categoria (0 - Perecível ou 1 - Não perecível):");
+                        int categoria = int.Parse(Console.ReadLine());
+
+                        produtoEncontrado = new Produto
                         {
-                            ConsultarProduto(produtoId);
+                            ID = produtoEncontrado.ID,
+                            Nome = descricao,
+                            Categoria = categoria
+                        };
 
-                            Console.WriteLine("Digite a nova descrição:");
-                            string descricao = Console.ReadLine();
-                            Console.WriteLine("Digite a nova categoria (0 - Perecível ou 1 - Não perecível):");
-                            int categoria = int.Parse(Console.ReadLine());
+                        bool alteradoComSucesso = produtoRepository.AlterarProduto(produtoEncontrado);
 
-                            produtoEncontrado = new Produto
-                            {
-                                ID = produtoEncontrado.ID,
-                                Nome = descricao,
-                                Categoria = categoria
-                            };
-
-                            bool alteradoComSucesso = produtoRepository.AlterarProduto(produtoEncontrado);
-
-                            if (alteradoComSucesso)
-                            {
-                                Console.WriteLine("Produto alterado com sucesso.");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Falha na alteração do produto.");
-                            }
+                        if (alteradoComSucesso)
+                        {
+                            Console.WriteLine("Produto alterado com sucesso.");
+                            ImprimirProduto(produtoEncontrado.ID);
                         }
                         else
                         {
-                            Console.WriteLine("Produto não localizado.");
+                            Console.WriteLine("Falha na alteração do produto.");
                         }
                     }
                     else
@@ -240,9 +235,65 @@ namespace ConsoleAppPedidos.Services
 
                 } while (alterarNovoProduto.Equals("y"));
             }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             catch (Exception ex)
             {
                 Console.WriteLine("Ocorreu um erro ao alterar o produto: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Imprime todos os produtos.
+        /// </summary>
+        /// <param name="produtos">Uma coleção de produtos a serem impressos.</param>
+        public void ImprimirTodosProdutos(IQueryable<Produto> produtos)
+        {
+            var listaProdutos = produtos.ToList();
+
+            foreach (var item in listaProdutos)
+            {
+                Console.WriteLine("###################################");
+
+                Console.Write(
+                    $"Cód. Produto: {item.ID} | " +
+                    $"Descrição: {item.Nome} | " +
+                    $"Categoria: {AppUtils.CarregarCategoriaProduto(item.ID)}\n");
+
+                Console.WriteLine("###################################");
+            }
+        }
+
+        /// <summary>
+        /// Imprime os detalhes de um produto.
+        /// </summary>
+        /// <param name="produtoId">O ID do produto a ser impresso.</param>
+        /// <exception cref="InvalidOperationException">Exceção lançada quando ocorre um erro ao consultar o produto ou o produto não é encontrado.</exception>
+        /// <exception cref="Exception">Exceção genérica lançada quando ocorre um erro ao imprimir o produto.</exception>
+        public void ImprimirProduto(int produtoId)
+        {
+            try
+            {
+                var produto = produtoRepository.ConsultarProduto(produtoId);
+
+                Console.WriteLine("###################################");
+
+                Console.Write(
+                    $"Cód. Produto: {produto.ID} | " +
+                    $"Descrição: {produto.Nome} | " +
+                    $"Categoria: {AppUtils.CarregarCategoriaProduto(produtoId)}\n");
+
+                Console.WriteLine("###################################");
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new InvalidOperationException(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

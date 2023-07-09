@@ -46,7 +46,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <returns>Uma lista de produtos.</returns>
         /// <exception cref="Exception">Ocorre quando há um erro ao consultar os produtos no banco de dados.</exception>
-        public IQueryable<Produto> ConsultarProdutos()
+        public IQueryable<Produto> ConsultarTodosProdutos()
         {
             try
             {

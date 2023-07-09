@@ -27,13 +27,22 @@ namespace ConsoleAppPedidos.Data
         /// Método que configura o contexto do banco de dados.
         /// </summary>
         /// <param name="optionsBuilder">Parâmetro para configuração do contexto.</param>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao configurar o contexto do banco de dados.</exception>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            if (!optionsBuilder.IsConfigured)
+            try
             {
-                string connectionString = "Server=localhost;Database=DBConsoleAppPedidos;User ID=SA;Password=Password123;Encrypt=false;TrustServerCertificate=false;Connection Timeout=30;";
-                optionsBuilder.UseSqlServer(connectionString);
+                if (!optionsBuilder.IsConfigured)
+                {
+                    string connectionString = "Server=localhost;Database=DBConsoleAppPedidos;User ID=SA;Password=Password123;Encrypt=false;TrustServerCertificate=false;Connection Timeout=5;";
+                    optionsBuilder.UseSqlServer(connectionString);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao configurar o contexto do banco de dados.", ex);
             }
         }
+
     }
 }

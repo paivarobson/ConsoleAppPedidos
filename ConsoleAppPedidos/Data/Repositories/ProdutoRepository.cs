@@ -50,7 +50,12 @@ namespace ConsoleAppPedidos.Data.Repositories
         {
             try
             {
-                return dbContexto.Produtos.AsQueryable();
+                var produtosEncontrados = dbContexto.Produtos.AsQueryable();
+
+                if (produtosEncontrados == null)
+                    throw new InvalidOperationException("Nenhum produto encontrado.");
+
+                return produtosEncontrados;
             }
             catch (DbUpdateException ex)
             {
@@ -68,7 +73,12 @@ namespace ConsoleAppPedidos.Data.Repositories
         {
             try
             {
-                return dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
+                var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
+
+                if (produtoEncontrado == null)
+                    throw new InvalidOperationException($"Produto com ID {produtoId} não encontrado.");
+
+                return produtoEncontrado;
             }
             catch (DbUpdateException ex)
             {
@@ -86,19 +96,20 @@ namespace ConsoleAppPedidos.Data.Repositories
         {
             try
             {
+                bool produtoAlterado = false;
+
                 var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produto.ID);
 
-                if (produtoEncontrado != null)
-                {
-                    produtoEncontrado.Nome = produto.Nome;
-                    produtoEncontrado.Categoria = produto.Categoria;
+                if (produtoEncontrado == null)
+                    throw new InvalidOperationException($"Produto com ID {produto.ID} não encontrado.");
 
-                    dbContexto.SaveChanges();
+                produtoEncontrado.Nome = produto.Nome;
+                produtoEncontrado.Categoria = produto.Categoria;
 
-                    return true;
-                }
+                dbContexto.SaveChanges();
 
-                return false;
+                return produtoAlterado;
+
             }
             catch (DbUpdateException ex)
             {

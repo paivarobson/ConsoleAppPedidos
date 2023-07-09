@@ -62,10 +62,11 @@ namespace ConsoleAppPedidos.Data.Repositories
             {
                 var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
 
-                if (pedidoEncontrado != null)
-                    return pedidoEncontrado;
-                else
-                    throw new DbUpdateException($"Pedido com ID {pedidoId} não encontrado.");
+                if (pedidoEncontrado == null)
+                    throw new InvalidOperationException($"Pedido com ID {pedidoId} não encontrado.");
+
+                return pedidoEncontrado;
+
             }
             catch (DbUpdateException ex)
             {
@@ -84,15 +85,11 @@ namespace ConsoleAppPedidos.Data.Repositories
             {
                 var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedido.ID);
 
-                if (pedidoEncontrado != null)
-                {
-                    dbContexto.Entry(pedidoEncontrado).CurrentValues.SetValues(pedido);
-                    dbContexto.SaveChanges();
-                }
-                else
-                {
-                    throw new DbUpdateException($"Pedido com ID {pedido.ID} não encontrado.");
-                }
+                if (pedidoEncontrado == null)
+                    throw new InvalidOperationException($"Pedido com ID {pedido.ID} não encontrado.");
+
+                dbContexto.Entry(pedidoEncontrado).CurrentValues.SetValues(pedido);
+                dbContexto.SaveChanges();
             }
             catch (DbUpdateException ex)
             {
@@ -111,15 +108,11 @@ namespace ConsoleAppPedidos.Data.Repositories
             {
                 var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedido.ID);
 
-                if (pedidoEncontrado != null)
-                {
-                    dbContexto.Pedidos.Remove(pedidoEncontrado);
-                    dbContexto.SaveChanges();
-                }
-                else
-                {
-                    throw new DbUpdateException($"Pedido com ID {pedido.ID} não encontrado.");
-                }
+                if (pedidoEncontrado == null)
+                    throw new InvalidOperationException($"Pedido com ID {pedido.ID} não encontrado.");
+
+                dbContexto.Pedidos.Remove(pedidoEncontrado);
+                dbContexto.SaveChanges();
             }
             catch (DbUpdateException ex)
             {
@@ -128,79 +121,24 @@ namespace ConsoleAppPedidos.Data.Repositories
         }
 
         /// <summary>
-        /// Calcula o valor total de um pedido, somando os valores unitários dos itens do pedido.
+        /// Consulta o último pedido cadastrado.
         /// </summary>
-        /// <param name="pedidoId">O ID do pedido.</param>
-        /// <returns>O valor total do pedido.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
-        public double CalcularValorTotal(int pedidoId)
+        /// <returns>O último pedido cadastrado ou null se não houver pedidos.</returns>
+        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao consultar o último pedido no banco de dados.</exception>
+        public Pedido ConsultarUltimoPedido()
         {
             try
             {
-                var pedido = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
-
-                if (pedido != null)
-                {
-                    double valorTotal = dbContexto.ItensDePedido
-                        .Where(i => i.PedidoID == pedidoId)
-                        .Sum(i => i.Quantidade * i.Valor);
-
-                    return valorTotal;
-                }
-
-                return 0.0;
-            }
-            catch (DbUpdateException ex)
-            {
-                throw new DbUpdateException("Ocorreu um erro ao calcular o valor total do pedido no banco de dados.", ex);
-            }
-        }
-
-        /// <summary>
-        /// Gera um identificador único para um novo pedido no formato "P_[letra, seguida de 3 números]_C".
-        /// </summary>
-        /// <returns>O identificador gerado para o novo pedido.</returns>
-        /// <exception cref="DbUpdateException">Exceção lançada quando ocorre um erro ao calcular o valor total do pedido no banco de dados.</exception>
-        public string GerarIdentificadorDoPedido()
-        {
-            try
-            {
-                // Obtém o último pedido registrado no banco de dados
                 var ultimoPedido = dbContexto.Pedidos.OrderByDescending(p => p.ID).FirstOrDefault();
 
-                int proximoNumero = 0;
-                char proximaLetra = 'A';
+                if (ultimoPedido == null)
+                    throw new InvalidOperationException("Não há pedidos cadastrados.");
 
-                if (ultimoPedido != null)
-                {
-                    // Obtém o identificador do último pedido
-                    string ultimoIdentificador = ultimoPedido.Identificador;
-                    char ultimaLetra = ultimoIdentificador[2];
-
-                    // Extrai o número do identificador do último pedido
-                    int ultimoNumero = int.Parse(ultimoIdentificador.Substring(3, 3));
-
-                    // Verifica se o número do último identificador é igual a 999
-                    // Se for, avança para a próxima letra; caso contrário, incrementa o número atual
-                    if (ultimoNumero == 999)
-                    {
-                        proximaLetra = (char)(ultimaLetra + 1);
-                    }
-                    else
-                    {
-                        proximaLetra = ultimaLetra;
-                        proximoNumero = ultimoNumero + 1;
-                    }
-                }
-
-                // Gera o identificador para o novo pedido com base na próxima letra e número disponíveis
-                string proximoIdentificador = $"P_{proximaLetra}{proximoNumero.ToString("D3")}_C";
-
-                return proximoIdentificador;
+                return ultimoPedido;
             }
             catch (DbUpdateException ex)
             {
-                throw new DbUpdateException("Ocorreu um erro ao gerar o identificador do pedido.", ex);
+                throw new DbUpdateException("Ocorreu um erro ao consultar o último pedido.", ex);
             }
         }
     }

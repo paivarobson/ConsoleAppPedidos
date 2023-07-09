@@ -1,104 +1,176 @@
-﻿using System;
-using System.Linq;
-using ConsoleAppPedidos.Models;
+﻿using ConsoleAppPedidos.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos.Data.Repositories
 {
+    /// <summary>
+    /// Classe repositório para manipulação de dados da entidade ItemDoPedido.
+    /// </summary>
     public class ItemDoPedidoRepository
     {
-        /// <summary>
-        /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
-        /// </summary>
+		/// <summary>
+	    /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
+	    /// </summary>    
         private readonly AppDbContexto dbContexto;
 
         /// <summary>
-        /// Construtor da classe ItemDoPedidoRepositories.
+        /// Construtor da classe ItemDoPedidoRepository.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
+        /// <exception cref="ArgumentNullException">Exceção lançada quando o dbContexto é nulo.</exception>
         public ItemDoPedidoRepository(AppDbContexto dbContexto)
         {
-            this.dbContexto = dbContexto;
+            this.dbContexto = dbContexto ?? throw new ArgumentNullException(nameof(dbContexto));
         }
 
         /// <summary>
         /// Método para consultar todos os itens do pedido.
         /// </summary>
+        /// <param name="pedidoId">ID do pedido.</param>
         /// <returns>Retorna todos os itens do pedido solicitado. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao consultar os itens do pedido.</exception>
         public IQueryable<ItemDoPedido> ConsultarItensDoPedido(int pedidoId)
         {
-            return dbContexto.ItensDePedido.Where(i => i.PedidoID == pedidoId).AsQueryable();
+            try
+            {
+                return dbContexto.ItensDePedido.Where(i => i.PedidoID == pedidoId).AsQueryable();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao consultar os itens do pedido.", ex);
+            }
         }
 
         /// <summary>
-        /// Método para consultar todos os itens de pedido.
+        /// Consulta todos os itens de pedido.
         /// </summary>
         /// <returns>Retorna todos os itens de pedido. Usado IQueryable para consulta ser realizado diretamente no banco de dados.</returns>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao consultar todos os itens de pedido.</exception>
         public IQueryable<ItemDoPedido> ConsultarTodosItensDePedido()
         {
-            return dbContexto.ItensDePedido.AsQueryable();
+            try
+            {
+                return dbContexto.ItensDePedido.AsQueryable();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao consultar todos os itens de pedido.", ex);
+            }
         }
 
         /// <summary>
-        /// Método para adicionar um novo item ao pedido.
+        /// Adiciona um novo item ao pedido.
         /// </summary>
         /// <param name="pedidoId">ID do pedido.</param>
-        /// <param name="novoItem">O novo item que será adicionado.</param>
+        /// <param name="novoItem">Novo item do pedido.</param>
+        /// <exception cref="ArgumentNullException">Exceção lançada caso o novoItem seja nulo.</exception>
+        /// <exception cref="ArgumentException">Exceção lançada caso o pedido não exista ou caso já exista um item com o mesmo ID.</exception>
+        /// <exception cref="InvalidOperationException">Exceção lançada caso ocorra uma operação inválida, como adicionar um item duplicado.</exception>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao adicionar o item ao pedido.</exception>
         public void AdicionarItemAoPedido(int pedidoId, ItemDoPedido novoItem)
         {
-            var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
-
-            if (pedidoEncontrado != null)
+            try
             {
-                var itemExistente = dbContexto.ItensDePedido.Any(i => i.ID == novoItem.ID);
-
-                if (!itemExistente)
+                if (novoItem == null)
                 {
-                    novoItem.PedidoID = pedidoId;
-                    dbContexto.ItensDePedido.Add(novoItem);
-
-                    dbContexto.SaveChanges();
+                    throw new ArgumentNullException(nameof(novoItem), "O item do pedido não pode ser nulo.");
                 }
-            }
-        }
 
-        /// <summary>
-        /// Método para alterar um item do pedido.
-        /// </summary>
-        /// <param name="pedidoId">ID do pedido.</param>
-        /// <param name="itemDePedidoId">ID do item do pedido que será alterado.</param>
-        /// <param name="itemDePedidoAtualizado">O item do pedido que será atualizado.</param>
-        public void AlterarItemDoPedido(int pedidoId, int itemDePedidoId, ItemDoPedido itemDePedidoAtualizado)
-        {
-            var itemEncontrado = dbContexto.ItensDePedido.FirstOrDefault(i => i.ID == itemDePedidoId && i.PedidoID == pedidoId);
+                var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
+                if (pedidoEncontrado == null)
+                {
+                    throw new ArgumentException("O pedido não existe.", nameof(pedidoId));
+                }
 
-            if (itemEncontrado != null)
-            {
-                dbContexto.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
+                var itemExistente = dbContexto.ItensDePedido.Any(i => i.ID == novoItem.ID);
+                if (itemExistente)
+                {
+                    throw new InvalidOperationException("Já existe um item com o mesmo ID.");
+                }
 
+                novoItem.PedidoID = pedidoId;
+                dbContexto.ItensDePedido.Add(novoItem);
                 dbContexto.SaveChanges();
             }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao adicionar o item ao pedido.", ex);
+            }
         }
 
         /// <summary>
-        /// Método para excluir um item do pedido.
+        /// Altera um item do pedido.
         /// </summary>
-        /// <param name="itemDoPedido">O item do pedido que será excluído.</param>
+        /// <param name="pedidoId">ID do pedido.</param>
+        /// <param name="itemDePedidoId">ID do item do pedido a ser alterado.</param>
+        /// <param name="itemDePedidoAtualizado">Item do pedido atualizado.</param>
+        /// <exception cref="ArgumentNullException">Exceção lançada caso o itemDePedidoAtualizado seja nulo.</exception>
+        /// <exception cref="ArgumentException">Exceção lançada caso o item do pedido não exista ou não esteja associado ao pedido especificado.</exception>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra algum erro ao alterar o item do pedido.</exception>
+        public void AlterarItemDoPedido(int pedidoId, int itemDePedidoId, ItemDoPedido itemDePedidoAtualizado)
+        {
+            try
+            {
+                if (itemDePedidoAtualizado == null)
+                {
+                    throw new ArgumentNullException(nameof(itemDePedidoAtualizado), "O item do pedido atualizado não pode ser nulo.");
+                }
+
+                var itemEncontrado = dbContexto.ItensDePedido.FirstOrDefault(i => i.ID == itemDePedidoId && i.PedidoID == pedidoId);
+                if (itemEncontrado == null)
+                {
+                    throw new ArgumentException("O item do pedido não existe ou não está associado ao pedido especificado.", nameof(itemDePedidoId));
+                }
+
+                dbContexto.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
+                dbContexto.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao alterar o item do pedido.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Exclui um item do pedido.
+        /// </summary>
+        /// <param name="itemDoPedido">Item do pedido a ser excluído.</param>
+        /// <exception cref="ArgumentNullException">Exceção lançada caso o itemDoPedido seja nulo.</exception>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao excluir o item do pedido.</exception>
         public void ExcluirItemDoPedido(ItemDoPedido itemDoPedido)
         {
-            dbContexto.ItensDePedido.Remove(itemDoPedido);
+            try
+            {
+                if (itemDoPedido == null)
+                {
+                    throw new ArgumentNullException(nameof(itemDoPedido), "O item do pedido não pode ser nulo.");
+                }
 
-            dbContexto.SaveChanges();
+                dbContexto.ItensDePedido.Remove(itemDoPedido);
+                dbContexto.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao excluir o item do pedido.", ex);
+            }
         }
 
         /// <summary>
-        /// Método para verificar se um produto está associado a algum pedido.v
+        /// Verifica se um produto está associado a algum pedido.
         /// </summary>
-        /// <param name="produtoId">O ID do produto a ser verificado.</param>
-        /// <returns>Retorna True se o produto estiver associado a algum pedido, False caso contrário.</returns>
+        /// <param name="produtoId">ID do produto a ser verificado.</param>
+        /// <returns>True se o produto está associado a algum pedido, False caso contrário.</returns>
+        /// <exception cref="DbUpdateException">Exceção lançada caso ocorra um erro ao verificar se o produto está associado a algum pedido.</exception>
         public bool ProdutoAssociadoPedido(int produtoId)
         {
-            return dbContexto.ItensDePedido.Any(i => i.ProdutoID == produtoId);
+            try
+            {
+                return dbContexto.ItensDePedido.Any(i => i.ProdutoID == produtoId);
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DbUpdateException("Ocorreu um erro ao verificar se o produto está associado a algum pedido.", ex);
+            }
         }
     }
 }
-

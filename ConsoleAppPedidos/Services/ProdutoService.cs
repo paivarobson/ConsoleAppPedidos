@@ -1,6 +1,7 @@
 ﻿using ConsoleAppPedidos.Data;
 using ConsoleAppPedidos.Data.Repositories;
 using ConsoleAppPedidos.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos.Services
 {
@@ -28,40 +29,47 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         public void CriarProduto()
         {
-            Console.WriteLine("Opção de criação de produto selecionada.");
-
-            Console.WriteLine("###################################");
-            Console.WriteLine("       Cadastrando novo produto...      ");
-            Console.WriteLine("###################################");
-
-            string adicionarNovoProduto;
-            var novoProduto = new Produto();
-
-            do
+            try
             {
-                Console.Write("Descrição do Produto: ");
-                string nome = Console.ReadLine();
-                Console.Write("Categoria (0 - Perecível) ou 1 - Não perecível): ");
-                int categoria = int.Parse(Console.ReadLine());
+                Console.WriteLine("Opção de criação de produto selecionada.");
 
-                novoProduto = new Produto
+                Console.WriteLine("###################################");
+                Console.WriteLine("       Cadastrando novo produto...      ");
+                Console.WriteLine("###################################");
+
+                string adicionarNovoProduto;
+                var novoProduto = new Produto();
+
+                do
                 {
-                    Nome = nome,
-                    Categoria = categoria
-                };
+                    Console.Write("Descrição do Produto: ");
+                    string nome = Console.ReadLine();
+                    Console.Write("Categoria (0 - Perecível ou 1 - Não perecível): ");
+                    int categoria = int.Parse(Console.ReadLine());
 
-                produtoRepository.CriarProduto(novoProduto);
+                    novoProduto = new Produto
+                    {
+                        Nome = nome,
+                        Categoria = categoria
+                    };
 
-                Console.Write("Deseja adicionar novo produto? (y/n): ");
-                adicionarNovoProduto = Console.ReadLine();
+                    produtoRepository.CriarProduto(novoProduto);
 
-            } while (adicionarNovoProduto.Equals("y"));
+                    Console.Write("Deseja adicionar novo produto? (y/n): ");
+                    adicionarNovoProduto = Console.ReadLine();
 
-            Console.WriteLine("###################################");
-            Console.WriteLine("     Produto(s) criado(s) com sucesso!    ");
-            Console.WriteLine("###################################");
+                } while (adicionarNovoProduto.Equals("y"));
 
-            ConsultarProduto(novoProduto.ID);
+                Console.WriteLine("###################################");
+                Console.WriteLine("     Produto(s) criado(s) com sucesso!    ");
+                Console.WriteLine("###################################");
+
+                ConsultarProduto(novoProduto.ID);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao criar o produto: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -70,43 +78,50 @@ namespace ConsoleAppPedidos.Services
         /// <param name="produtoId">ID do produto a ser consultado.</param>
         public void ConsultarProduto(int produtoId = 0)
         {
-            string consultarNovoProduto;
-
-            do
+            try
             {
-                if (produtoId == 0)
+                string consultarNovoProduto;
+
+                do
                 {
-                    Console.WriteLine("Opção de consulta de produto selecionada.");
-                    Console.WriteLine("Digite o código do produto:");
+                    if (produtoId == 0)
+                    {
+                        Console.WriteLine("Opção de consulta de produto selecionada.");
+                        Console.WriteLine("Digite o código do produto:");
 
-                    produtoId = int.Parse(Console.ReadLine());
-                }
+                        produtoId = int.Parse(Console.ReadLine());
+                    }
 
-                var produto = produtoRepository.ConsultarProduto(produtoId);
+                    var produto = produtoRepository.ConsultarProduto(produtoId);
 
-                if (produto != null)
-                {
-                    Console.WriteLine("###################################");
+                    if (produto != null)
+                    {
+                        Console.WriteLine("###################################");
 
-                    Console.Write(
-                        $"Cód. Produto: {produto.ID} | " +
-                        $"Descrição: {produto.Nome} | " +
-                        $"Categoria: {AppUtils.CarregarCategoriaProduto(produtoId)}\n");
+                        Console.Write(
+                            $"Cód. Produto: {produto.ID} | " +
+                            $"Descrição: {produto.Nome} | " +
+                            $"Categoria: {AppUtils.CarregarCategoriaProduto(produtoId)}\n");
 
-                    Console.WriteLine("###################################");
+                        Console.WriteLine("###################################");
 
-                }
-                else
-                {
-                    Console.WriteLine("Produto não localizado.");
-                }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Produto não localizado.");
+                    }
 
-                Console.Write("Deseja consultar novo produto? (y/n):");
-                consultarNovoProduto = Console.ReadLine();
+                    Console.Write("Deseja consultar novo produto? (y/n):");
+                    consultarNovoProduto = Console.ReadLine();
 
-                produtoId = 0;
+                    produtoId = 0;
 
-            } while (consultarNovoProduto.Equals("y"));
+                } while (consultarNovoProduto.Equals("y"));
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao consultar o produto: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -114,42 +129,49 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         public void ExcluirProduto()
         {
-            Console.WriteLine("Opção de exclusão do produto selecionado.");
-
-            string excluirNovoProduto = "n";
-
-            do
+            try
             {
-                Console.WriteLine("Digite o código do produto:");
-                int produtoId = int.Parse(Console.ReadLine());
+                Console.WriteLine("Opção de exclusão do produto selecionado.");
 
-                bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
+                string excluirNovoProduto = "n";
 
-                if (!produtoAssociadoAoPedido)
+                do
                 {
-                    Console.Clear();
-                    var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
+                    Console.WriteLine("Digite o código do produto:");
+                    int produtoId = int.Parse(Console.ReadLine());
 
-                    if (produtoEncontrado != null)
+                    bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
+
+                    if (!produtoAssociadoAoPedido)
                     {
-                        produtoRepository.ExcluirProduto(produtoEncontrado);
+                        Console.Clear();
+                        var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
 
-                        Console.WriteLine("Produto excluído com sucesso.");
+                        if (produtoEncontrado != null)
+                        {
+                            produtoRepository.ExcluirProduto(produtoEncontrado);
+
+                            Console.WriteLine("Produto excluído com sucesso.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Produto não encontrado.");
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Produto não encontrado.");
+                        Console.WriteLine("Produto não pode ser excluído pois está associado a um pedido.");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Produto não pode ser excluído pois está associado a um pedido.");
-                }
 
-                Console.WriteLine("Deseja excluir outro produto? (y/n)");
-                excluirNovoProduto = Console.ReadLine();
+                    Console.WriteLine("Deseja excluir outro produto? (y/n)");
+                    excluirNovoProduto = Console.ReadLine();
 
-            } while (excluirNovoProduto.Equals("y"));
+                } while (excluirNovoProduto.Equals("y"));
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao excluir o produto: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -157,64 +179,71 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         public void AlterarProduto()
         {
-            Console.WriteLine("Opção de atualização do produto selecionado.");
-
-            string alterarNovoProduto = "n";
-
-            do
+            try
             {
-                Console.WriteLine("Digite o código do produto:");
-                int produtoId = int.Parse(Console.ReadLine());
+                Console.WriteLine("Opção de atualização do produto selecionado.");
 
-                bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
+                string alterarNovoProduto = "n";
 
-                if (!produtoAssociadoAoPedido)
+                do
                 {
-                    Console.Clear();
+                    Console.WriteLine("Digite o código do produto:");
+                    int produtoId = int.Parse(Console.ReadLine());
 
-                    var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
+                    bool produtoAssociadoAoPedido = itemPedidoRepository.ProdutoAssociadoPedido(produtoId);
 
-                    if (produtoEncontrado != null)
+                    if (!produtoAssociadoAoPedido)
                     {
-                        ConsultarProduto(produtoId);
+                        Console.Clear();
 
-                        Console.WriteLine("Digite a nova descrição:");
-                        string descricao = Console.ReadLine();
-                        Console.WriteLine("Digite a nova categoria (0 - Perecível) ou 1 - Não perecível):");
-                        int categoria = int.Parse(Console.ReadLine());
+                        var produtoEncontrado = produtoRepository.ConsultarProduto(produtoId);
 
-                        produtoEncontrado = new Produto
+                        if (produtoEncontrado != null)
                         {
-                            ID = produtoEncontrado.ID,
-                            Nome = descricao,
-                            Categoria = categoria
-                        };
+                            ConsultarProduto(produtoId);
 
-                        bool alteradoComSucesso = produtoRepository.AlterarProduto(produtoEncontrado);
+                            Console.WriteLine("Digite a nova descrição:");
+                            string descricao = Console.ReadLine();
+                            Console.WriteLine("Digite a nova categoria (0 - Perecível ou 1 - Não perecível):");
+                            int categoria = int.Parse(Console.ReadLine());
 
-                        if (alteradoComSucesso)
-                        {
-                            Console.WriteLine("Produto alterado com sucesso.");
+                            produtoEncontrado = new Produto
+                            {
+                                ID = produtoEncontrado.ID,
+                                Nome = descricao,
+                                Categoria = categoria
+                            };
+
+                            bool alteradoComSucesso = produtoRepository.AlterarProduto(produtoEncontrado);
+
+                            if (alteradoComSucesso)
+                            {
+                                Console.WriteLine("Produto alterado com sucesso.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("Falha na alteração do produto.");
+                            }
                         }
                         else
                         {
-                            Console.WriteLine("Falha na alteração do produto.");
+                            Console.WriteLine("Produto não localizado.");
                         }
                     }
                     else
                     {
-                        Console.WriteLine("Produto não localizado.");
+                        Console.WriteLine("Alteração não permitida. Categoria de produto presente em pedido.");
                     }
-                }
-                else
-                {
-                    Console.WriteLine("Alteração não permitida. Categoria de produto presente em pedido.");
-                }
 
-                Console.WriteLine("Deseja alterar novo produto? (y/n)");
-                alterarNovoProduto = Console.ReadLine();
+                    Console.WriteLine("Deseja alterar novo produto? (y/n)");
+                    alterarNovoProduto = Console.ReadLine();
 
-            } while (alterarNovoProduto.Equals("y"));
+                } while (alterarNovoProduto.Equals("y"));
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao alterar o produto: " + ex.Message);
+            }
         }
     }
 }

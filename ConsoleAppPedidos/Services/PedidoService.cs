@@ -1,6 +1,7 @@
 ﻿using ConsoleAppPedidos.Data;
 using ConsoleAppPedidos.Data.Repositories;
 using ConsoleAppPedidos.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos.Services
 {
@@ -30,86 +31,93 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         public void CriarPedido()
         {
-            Console.WriteLine("Opção de criação de pedido selecionada.");
-
-            Console.WriteLine("###################################");
-            Console.WriteLine("       Criando novo pedido...      ");
-            Console.WriteLine("###################################");
-
-            string identificador = pedidoRepository.GerarIdentificadorDoPedido();
-            Console.Write("Descrição: ");
-            string descricao = Console.ReadLine();
-
-            var novoPedido = new Pedido
+            try
             {
-                Identificador = identificador,
-                Descricao = descricao
-            };
+                Console.WriteLine("Opção de criação de pedido selecionada.");
 
-            pedidoRepository.CriarPedido(novoPedido);
+                Console.WriteLine("###################################");
+                Console.WriteLine("       Criando novo pedido...      ");
+                Console.WriteLine("###################################");
 
-            string adicionarNovoItem;
-            ItemDoPedido novoItem;
+                string identificador = pedidoRepository.GerarIdentificadorDoPedido();
+                Console.Write("Descrição: ");
+                string descricao = Console.ReadLine();
 
-            do
-            {
-                Console.Write("Código do Produto: ");
-                int produtoId = int.Parse(Console.ReadLine());
-                Console.Write("Quantidade: ");
-                int quantidade = int.Parse(Console.ReadLine());
-
-                while (quantidade < 1)
+                var novoPedido = new Pedido
                 {
-                    Console.Write("Quantidade deve ser maior que 0. Tente novamente: ");
-                    quantidade = int.Parse(Console.ReadLine());
-                }
-
-                Console.Write("Valor Unitário: ");
-                double valorUnitario = double.Parse(Console.ReadLine());
-
-                while (valorUnitario < 0.00)
-                {
-                    Console.Write("Valor Unitário deve ser maior ou igual a R$ 0. Tente novamente: ");
-                    quantidade = int.Parse(Console.ReadLine());
-                }
-
-                novoItem = new ItemDoPedido
-                {
-                    ProdutoID = produtoId,
-                    Quantidade = quantidade,
-                    Valor = valorUnitario
+                    Identificador = identificador,
+                    Descricao = descricao
                 };
 
-                bool itemExistenteNoPedido = itemPedidoRepository.ConsultarItensDoPedido(novoPedido.ID).Any(i => i.ProdutoID == produtoId);
+                pedidoRepository.CriarPedido(novoPedido);
 
-                var produtoExiste = produtoRepository.ConsultarProduto(produtoId);
+                string adicionarNovoItem;
+                ItemDoPedido novoItem;
 
-                if (!itemExistenteNoPedido)
+                do
                 {
-                    if (produtoExiste != null)
-                        itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                    Console.Write("Código do Produto: ");
+                    int produtoId = int.Parse(Console.ReadLine());
+                    Console.Write("Quantidade: ");
+                    int quantidade = int.Parse(Console.ReadLine());
+
+                    while (quantidade < 1)
+                    {
+                        Console.Write("Quantidade deve ser maior que 0. Tente novamente: ");
+                        quantidade = int.Parse(Console.ReadLine());
+                    }
+
+                    Console.Write("Valor Unitário: ");
+                    double valorUnitario = double.Parse(Console.ReadLine());
+
+                    while (valorUnitario < 0.00)
+                    {
+                        Console.Write("Valor Unitário deve ser maior ou igual a R$ 0. Tente novamente: ");
+                        valorUnitario = double.Parse(Console.ReadLine());
+                    }
+
+                    novoItem = new ItemDoPedido
+                    {
+                        ProdutoID = produtoId,
+                        Quantidade = quantidade,
+                        Valor = valorUnitario
+                    };
+
+                    bool itemExistenteNoPedido = itemPedidoRepository.ConsultarItensDoPedido(novoPedido.ID).Any(i => i.ProdutoID == produtoId);
+
+                    var produtoExiste = produtoRepository.ConsultarProduto(produtoId);
+
+                    if (!itemExistenteNoPedido)
+                    {
+                        if (produtoExiste != null)
+                            itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                        else
+                            Console.WriteLine("Produto não cadastrado.");
+                    }
                     else
-                        Console.WriteLine("Produto não cadastrado.");
-                }
-                else
-                {
-                    Console.WriteLine("Produto já presente no item de pedido.");
-                }
+                    {
+                        Console.WriteLine("Produto já presente no item de pedido.");
+                    }
 
-                Console.Write("Deseja adicionar novo item? (y/n):");
-                adicionarNovoItem = Console.ReadLine();
+                    Console.Write("Deseja adicionar novo item? (y/n):");
+                    adicionarNovoItem = Console.ReadLine();
 
-            } while (adicionarNovoItem.Equals("y"));
+                } while (adicionarNovoItem.Equals("y"));
 
-            novoPedido.ValorTotal = pedidoRepository.CalcularValorTotal(novoPedido.ID);
+                novoPedido.ValorTotal = pedidoRepository.CalcularValorTotal(novoPedido.ID);
 
-            dbContexto.SaveChanges();
+                dbContexto.SaveChanges();
 
-            Console.WriteLine("###################################");
-            Console.WriteLine("     Pedido criado com sucesso!    ");
-            Console.WriteLine("###################################");
+                Console.WriteLine("###################################");
+                Console.WriteLine("     Pedido criado com sucesso!    ");
+                Console.WriteLine("###################################");
 
-            ConsultarPedido(novoPedido.ID);
+                ConsultarPedido(novoPedido.ID);
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao criar o pedido: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -130,41 +138,48 @@ namespace ConsoleAppPedidos.Services
                     pedidoId = int.Parse(Console.ReadLine());
                 }
 
-                var pedido = pedidoRepository.ConsultarPedido(pedidoId);
-                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
-                var produtos = produtoRepository.ConsultarProdutos().ToList();
-
-                int contador = 1;
-
-                if (pedido != null)
+                try
                 {
-                    Console.WriteLine("###################################");
+                    var pedido = pedidoRepository.ConsultarPedido(pedidoId);
+                    var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+                    var produtos = produtoRepository.ConsultarProdutos().ToList();
 
-                    Console.Write(
-                        $"Cód. Pedido: {pedido.ID} | " +
-                        $"Identificador: {pedido.Identificador} | " +
-                        $"Descrição: {pedido.Descricao} | " +
-                        $"Valor total: {pedido.ValorTotal}\n");
+                    int contador = 1;
 
-                    foreach (var item in itensDoPedido)
+                    if (pedido != null)
                     {
-                        var produto = produtos.FirstOrDefault(p => p.ID == item.ProdutoID);
+                        Console.WriteLine("###################################");
 
-                        Console.Write($"    Item : 00{contador}\n");
-                        Console.Write($"### Cod. Produto: {item.ProdutoID}\n");
-                        Console.Write($"### Produto: {item.Produto.Nome}\n");
-                        Console.Write($"### Categoria: {AppUtils.CarregarCategoriaProduto(produto.Categoria)}\n");
-                        Console.Write($"### Qtd: {item.Quantidade}\n");
-                        Console.Write($"### Vlr. Unit.: {item.Valor}\n");
+                        Console.Write(
+                            $"Cód. Pedido: {pedido.ID} | " +
+                            $"Identificador: {pedido.Identificador} | " +
+                            $"Descrição: {pedido.Descricao} | " +
+                            $"Valor total: {pedido.ValorTotal}\n");
 
-                        contador++;
+                        foreach (var item in itensDoPedido)
+                        {
+                            var produto = produtos.FirstOrDefault(p => p.ID == item.ProdutoID);
+
+                            Console.Write($"    Item : 00{contador}\n");
+                            Console.Write($"### Cod. Produto: {item.ProdutoID}\n");
+                            Console.Write($"### Produto: {item.Produto.Nome}\n");
+                            Console.Write($"### Categoria: {AppUtils.CarregarCategoriaProduto(produto.Categoria)}\n");
+                            Console.Write($"### Qtd: {item.Quantidade}\n");
+                            Console.Write($"### Vlr. Unit.: {item.Valor}\n");
+
+                            contador++;
+                        }
+
+                        Console.WriteLine("###################################");
                     }
-
-                    Console.WriteLine("###################################");
+                    else
+                    {
+                        Console.WriteLine("Pedido não localizado.");
+                    }
                 }
-                else
+                catch (DbUpdateException ex)
                 {
-                    Console.WriteLine("Pedido não localizado.");
+                    Console.WriteLine($"Ocorreu um erro ao consultar o pedido: {ex.Message}");
                 }
 
                 pedidoId = 0;
@@ -180,64 +195,78 @@ namespace ConsoleAppPedidos.Services
         /// </summary>
         public void AlterarPedido()
         {
-            Console.WriteLine("Opção de atualização de pedido selecionada.");
+        	try
+        	{
+	            Console.WriteLine("Opção de atualização de pedido selecionada.");
 
-            Console.WriteLine("Digite o código do pedido:");
-            int pedidoId = int.Parse(Console.ReadLine());
+	            Console.WriteLine("Digite o código do pedido:");
+	            int pedidoId = int.Parse(Console.ReadLine());
 
-            Console.Clear();
-            ConsultarPedido(pedidoId);
+	            Console.Clear();
+	            ConsultarPedido(pedidoId);
 
-            Console.WriteLine("Digite o novo Identificador:");
-            string identificador = Console.ReadLine();
-            Console.WriteLine("Digite a nova descrição:");
-            string descricao = Console.ReadLine();
-            Console.WriteLine("Digite o valor total:");
-            double valorTotal = int.Parse(Console.ReadLine());
+	            Console.WriteLine("Digite o novo Identificador:");
+	            string identificador = Console.ReadLine();
+	            Console.WriteLine("Digite a nova descrição:");
+	            string descricao = Console.ReadLine();
+	            Console.WriteLine("Digite o valor total:");
+	            double valorTotal = int.Parse(Console.ReadLine());
 
-            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
+	            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-            var pedido = new Pedido
-            {
-                ID = pedidoEncontrado.ID,
-                Identificador = identificador,
-                Descricao = descricao,
-                ValorTotal = valorTotal
-            };
+	            var pedido = new Pedido
+	            {
+	                ID = pedidoEncontrado.ID,
+	                Identificador = identificador,
+	                Descricao = descricao,
+	                ValorTotal = valorTotal
+	            };
 
-            pedidoRepository.AlterarPedido(pedido);
+                pedidoRepository.AlterarPedido(pedido);
 
-            Console.WriteLine("Pedido alterado com sucesso.");
-        }
+	            Console.WriteLine("Pedido alterado com sucesso.");
+	        }
+	        catch (DbUpdateException ex)
+	        {
+	            Console.WriteLine("Ocorreu um erro ao alterar o pedido: " + ex.Message);
+	        }
+	    }
 
-        /// <summary>
-        /// Exclui um pedido existente e seus itens associados.
-        /// </summary>
-        public void ExcluirPedido()
-        {
-            Console.WriteLine("Opção de exclusão de pedido selecionada.");
-            Console.WriteLine("Digite o código do pedido:");
-            int pedidoId = int.Parse(Console.ReadLine());
+	    /// <summary>
+	    /// Exclui um pedido existente e seus itens associados.
+	    /// </summary>
+	    public void ExcluirPedido()
+	    {
+	        try
+	        {
+	            Console.WriteLine("Opção de exclusão de pedido selecionada.");
+	            Console.WriteLine("Digite o código do pedido:");
+	            int pedidoId = int.Parse(Console.ReadLine());
 
-            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
+	            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-            if (pedidoEncontrado != null)
-            {
-                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+	            if (pedidoEncontrado != null)
+	            {
+	                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
 
-                pedidoRepository.ExcluirPedido(pedidoEncontrado);
+	                pedidoRepository.ExcluirPedido(pedidoEncontrado);
 
-                foreach (var item in itensDoPedido)
-                {
-                    itemPedidoRepository.ExcluirItemDoPedido(item);
-                }
+	                foreach (var item in itensDoPedido)
+	                {
+	                    itemPedidoRepository.ExcluirItemDoPedido(item);
+	                }
 
-                Console.WriteLine("Pedido excluído com sucesso.");
-            }
-            else
-            {
-                Console.WriteLine("Pedido não localizado.");
-            }
-        }
-    }
+	                Console.WriteLine("Pedido excluído com sucesso.");
+	            }
+	            else
+	            {
+	                Console.WriteLine("Pedido não localizado.");
+	            }
+	        }
+	        catch (DbUpdateException ex)
+	        {
+	            Console.WriteLine("Ocorreu um erro ao excluir o pedido: " + ex.Message);
+	        }
+	    }
+	}
 }

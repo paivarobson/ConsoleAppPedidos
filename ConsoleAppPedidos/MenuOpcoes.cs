@@ -70,7 +70,25 @@ namespace ConsoleAppPedidos
                 switch (opcao)
                 {
                     case "1":
-                        pedidoService.CriarPedido();
+                        string respostaUsuario;
+                        do
+                        {pedidoService.CriarPedido();
+
+                            perguntaUsuario:
+                            Console.WriteLine("Deseja criar novo pedido? (s/n)");
+                            respostaUsuario = Console.ReadLine();
+
+                            if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                AppUtils.MensagemRespostaInvalidaUsuario();
+                                goto perguntaUsuario;
+                            }
+
+                        } while (respostaUsuario.Equals("s"));
                         break;
                     case "2":
                         pedidoService.ConsultarTodosPedidos();

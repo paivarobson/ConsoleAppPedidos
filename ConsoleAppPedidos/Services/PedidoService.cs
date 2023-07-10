@@ -158,7 +158,7 @@ namespace ConsoleAppPedidos.Services
                 Console.WriteLine("###################################");
 
                 Console.Clear();
-                ImprimirPedido(listaPedidos) ;
+                ImprimirPedido(listaPedidos);
             }
             catch (InvalidOperationException ex)
             {

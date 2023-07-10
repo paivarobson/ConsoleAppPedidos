@@ -33,86 +33,132 @@ namespace ConsoleAppPedidos.Services
         {
             try
             {
+                List<Pedido> listaPedidos = new List<Pedido>();
+                List<ItemDoPedido> listaItensPedido = new List<ItemDoPedido>();
+
+                string respostaUsuario;
+                int produtoIdInseridoPedido;
+                bool produtoCadastrado = false;
+
                 Console.WriteLine("Opção de criação de pedido selecionada.");
-
-                Console.WriteLine("###################################");
-                Console.WriteLine("       Criando novo pedido...      ");
-                Console.WriteLine("###################################");
-
-                string identificador = GerarIdentificadorDoPedido();
-                Console.Write("Descrição: ");
-                string descricao = Console.ReadLine();
-
-                var novoPedido = new Pedido
-                {
-                    Identificador = identificador,
-                    Descricao = descricao
-                };
-
-                pedidoRepository.CriarPedido(novoPedido);
-
-                string adicionarNovoItem;
-                ItemDoPedido novoItem;
 
                 do
                 {
-                    Console.Write("Código do Produto: ");
-                    int produtoId = int.Parse(Console.ReadLine());
-                    Console.Write("Quantidade: ");
-                    int quantidade = int.Parse(Console.ReadLine());
+                    Console.Clear();
 
-                    while (quantidade < 1)
+                    Console.WriteLine("###################################");
+                    Console.WriteLine("       Criando novo pedido...      ");
+                    Console.WriteLine("###################################");
+
+                    string identificador = GerarIdentificadorDoPedido();
+                    Console.Write("Descrição: ");
+                    string descricao = Console.ReadLine();
+
+                    var novoPedido = new Pedido
                     {
-                        Console.Write("Quantidade deve ser maior que 0. Tente novamente: ");
-                        quantidade = int.Parse(Console.ReadLine());
-                    }
-
-                    Console.Write("Valor Unitário: ");
-                    double valorUnitario = double.Parse(Console.ReadLine());
-
-                    while (valorUnitario < 0.00)
-                    {
-                        Console.Write("Valor Unitário deve ser maior ou igual a R$ 0. Tente novamente: ");
-                        valorUnitario = double.Parse(Console.ReadLine());
-                    }
-
-                    novoItem = new ItemDoPedido
-                    {
-                        ProdutoID = produtoId,
-                        Quantidade = quantidade,
-                        Valor = valorUnitario
+                        Identificador = identificador,
+                        Descricao = descricao
                     };
 
-                    bool itemExistenteNoPedido = itemPedidoRepository.ConsultarItensDoPedido(novoPedido.ID).Any(i => i.ProdutoID == produtoId);
+                    listaPedidos.Add(novoPedido);
 
-                    var produtoExiste = produtoRepository.ConsultarProduto(produtoId);
-
-                    if (!itemExistenteNoPedido)
+                    do
                     {
-                        if (produtoExiste != null)
-                            itemPedidoRepository.AdicionarItemAoPedido(novoPedido.ID, novoItem);
+                        Console.Write("Código do Produto: ");
+                        int produtoId = int.Parse(Console.ReadLine());
+                        bool itemJaAdicionadoAoPedidoExistente = false;
+
+                        produtoCadastrado = produtoRepository.ConsultarProdutoExiste(produtoId);
+
+                        if (produtoCadastrado)
+                        {
+                            if (listaItensPedido.Count() > 0)
+                            {
+                                foreach (var item in listaItensPedido)
+                                {
+                                    if (item.ProdutoID == produtoId)
+                                    {
+                                        Console.WriteLine("Produto já adicionado ao pedido.");
+
+                                        itemJaAdicionadoAoPedidoExistente = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!itemJaAdicionadoAoPedidoExistente)
+                            {
+                                Console.Write("Quantidade: ");
+                                int quantidade = int.Parse(Console.ReadLine());
+
+                                while (quantidade < 1)
+                                {
+                                    Console.Write("Quantidade deve ser maior que 0. Tente novamente: ");
+                                    quantidade = int.Parse(Console.ReadLine());
+                                }
+
+                                Console.Write("Valor Unitário: ");
+                                double valorUnitario = double.Parse(Console.ReadLine());
+
+                                while (valorUnitario < 0.00)
+                                {
+                                    Console.Write("Valor Unitário deve ser maior ou igual a R$ 0. Tente novamente: ");
+                                    valorUnitario = double.Parse(Console.ReadLine());
+                                }
+
+                                var novoItem = new ItemDoPedido
+                                {
+                                    ProdutoID = produtoId,
+                                    Quantidade = quantidade,
+                                    Valor = valorUnitario
+                                };
+
+                                listaItensPedido.Add(novoItem);
+                            }
+                            
+                        }
                         else
-                            Console.WriteLine("Produto não cadastrado.");
-                    }
-                    else
+                        {
+                            Console.WriteLine("Produto não encontrado.");
+                        }
+
+                        perguntaUsuario:
+                        Console.Write("Deseja adicionar novo item? (s/n):");
+                        respostaUsuario = Console.ReadLine();                        
+
+                        if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            AppUtils.MensagemRespostaInvalidaUsuario();
+                            goto perguntaUsuario;
+                        }
+
+                    } while (respostaUsuario.Equals("s"));
+
+                } while (!produtoCadastrado);
+
+                foreach (var pedido in listaPedidos)
+                {
+                    pedidoRepository.CriarPedido(pedido);
+
+                    foreach (var itemDoProduto in listaItensPedido)
                     {
-                        Console.WriteLine("Produto já presente no item de pedido.");
+                        itemPedidoRepository.AdicionarItemAoPedido(pedido.ID, itemDoProduto);
                     }
 
-                    Console.Write("Deseja adicionar novo item? (y/n):");
-                    adicionarNovoItem = Console.ReadLine();
-
-                } while (adicionarNovoItem.Equals("y"));
-
-                novoPedido.ValorTotal = CalcularValorTotal(novoPedido.ID);
-
-                dbContexto.SaveChanges();
+                    pedido.ValorTotal = CalcularValorTotal(pedido.ID);
+                    pedidoRepository.SalvarPedido();
+                }
 
                 Console.WriteLine("###################################");
                 Console.WriteLine("     Pedido criado com sucesso!    ");
                 Console.WriteLine("###################################");
 
-                ImprimirPedido(novoPedido.ID);
+                Console.Clear();
+                ImprimirPedido(listaPedidos) ;
             }
             catch (InvalidOperationException ex)
             {
@@ -124,9 +170,27 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
+        /// <summary>
+        /// Consulta e imprime todos os pedidos cadastrados.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Exceção lançada quando ocorre um erro ao consultar os pedidos.</exception>
+        /// <exception cref="Exception">Exceção genérica lançada quando ocorre um erro ao consultar ou imprimir os pedidos.</exception>
         public void ConsultarTodosPedidos()
         {
-            throw new NotImplementedException();
+            try
+            {
+                var pedidos = pedidoRepository.ConsultarTodosPedidos();
+
+                ImprimirPedido(pedidos.ToList());
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Ocorreu um erro ao consultar todos os pedidos: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -137,26 +201,52 @@ namespace ConsoleAppPedidos.Services
         {
             try
             {
-                string consultarNovoPedido;
+                string respostaUsuario;
+
+                Console.WriteLine("Opção de consulta de pedido selecionada.");
 
                 do
                 {
                     if (pedidoId == 0)
                     {
-                        Console.WriteLine("Opção de consulta de pedido selecionada.");
                         Console.WriteLine("Digite o código do pedido:");
 
                         pedidoId = int.Parse(Console.ReadLine());
                     }
 
-                    ImprimirPedido(pedidoId);
+                    var pedido = pedidoRepository.ConsultarPedido(pedidoId);
 
-                    pedidoId = 0;
+                    var listaPedido = new List<Pedido>
+                    {
+                        pedido
+                    };
 
-                    Console.Write("Deseja consultar novo pedido? (y/n):");
-                    consultarNovoPedido = Console.ReadLine();
+                    if (pedido != null)
+                    {
+                        ImprimirPedido(listaPedido);
 
-                } while (consultarNovoPedido.Equals("y"));
+                        pedidoId = 0;
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Pedido {pedidoId} não localizado.");
+                    }
+
+                    perguntaUsuario:
+                    Console.Write("Deseja consultar novo pedido? (s/n):");
+                    respostaUsuario = Console.ReadLine();
+
+                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        AppUtils.MensagemRespostaInvalidaUsuario();
+                        goto perguntaUsuario;
+                    }
+
+                } while (respostaUsuario.Equals("s"));
             }
             catch (InvalidOperationException ex)
             {
@@ -175,37 +265,73 @@ namespace ConsoleAppPedidos.Services
         {
         	try
         	{
-	            Console.WriteLine("Opção de atualização de pedido selecionada.");
+                List<Pedido> listaPedidosAlterados = new List<Pedido>();
+                string respostaUsuario;
 
-	            Console.WriteLine("Digite o código do pedido:");
-	            int pedidoId = int.Parse(Console.ReadLine());
+                Console.Clear();
 
-	            Console.Clear();
-	            pedidoRepository.ConsultarPedido(pedidoId);
+                Console.WriteLine("Opção de atualização de pedido selecionada.");
 
-	            Console.WriteLine("Digite o novo Identificador:");
-	            string identificador = Console.ReadLine();
-	            Console.WriteLine("Digite a nova descrição:");
-	            string descricao = Console.ReadLine();
-	            Console.WriteLine("Digite o valor total:");
-	            double valorTotal = int.Parse(Console.ReadLine());
+                do
+                {
+                    var todosPedidosEncontrados = pedidoRepository.ConsultarTodosPedidos();
 
-	            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
+                    ImprimirPedido(todosPedidosEncontrados.ToList());
 
-	            var pedido = new Pedido
-	            {
-	                ID = pedidoEncontrado.ID,
-	                Identificador = identificador,
-	                Descricao = descricao,
-	                ValorTotal = valorTotal
-	            };
+                    Console.WriteLine("Digite o código do pedido:");
+                    int pedidoId = int.Parse(Console.ReadLine());
 
-                pedidoRepository.AlterarPedido(pedido);
+                    var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-                ImprimirPedido(pedido.ID);
+                    if (pedidoEncontrado != null)
+                    {
+                        Console.WriteLine("Digite a nova descrição:");
+                        string descricao = Console.ReadLine();
 
-	            Console.WriteLine("Pedido alterado com sucesso.");
-	        }
+                        var pedidoAlterado = new Pedido
+                        {
+                            ID = pedidoEncontrado.ID,
+                            Identificador = pedidoEncontrado.Identificador,
+                            Descricao = descricao,
+                            ValorTotal = pedidoEncontrado.ValorTotal
+                        };
+
+                        pedidoRepository.AlterarPedido(pedidoAlterado);
+
+                        if (!listaPedidosAlterados.Any(p => p.ID == pedidoAlterado.ID))
+                        {
+                            listaPedidosAlterados.Add(pedidoRepository.ConsultarPedido(pedidoAlterado.ID));
+                        }
+
+                        Console.Clear();
+                        ImprimirPedido(listaPedidosAlterados);
+                        Console.WriteLine("Pedido(s) alterado(s) com sucesso.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Pedido {pedidoId} não encontrado.");
+                    }
+
+                    perguntaUsuario:
+                    Console.Write("Deseja alterar outro pedido? (s/n):");
+                    respostaUsuario = Console.ReadLine();
+
+                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        AppUtils.MensagemRespostaInvalidaUsuario();
+                        goto perguntaUsuario;
+                    }
+
+                } while (respostaUsuario.Equals("s"));
+
+                Console.Clear();
+                Console.WriteLine("Pedido(s) alterado(s):");
+                ImprimirPedido(listaPedidosAlterados);
+            }
             catch (InvalidOperationException ex)
             {
                 Console.WriteLine(ex.Message);
@@ -216,39 +342,64 @@ namespace ConsoleAppPedidos.Services
 	        }
 	    }
 
-	    /// <summary>
-	    /// Exclui um pedido existente e seus itens associados.
-	    /// </summary>
-	    public void ExcluirPedido()
+        /// <summary>
+        /// Exclui um pedido existente e seus itens associados.
+        /// </summary>
+        public void ExcluirPedido()
 	    {
 	        try
 	        {
-	            Console.WriteLine("Opção de exclusão de pedido selecionada.");
-	            Console.WriteLine("Digite o código do pedido:");
-	            int pedidoId = int.Parse(Console.ReadLine());
+                Console.WriteLine("Opção de exclusão de pedido selecionada.");
 
-	            var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
+                string respostaUsuario;
 
-	            if (pedidoEncontrado != null)
-	            {
-                    ImprimirPedido(pedidoEncontrado.ID);
+                do
+                {
+                    Console.Clear();
+                    var listaPedidos = pedidoRepository.ConsultarTodosPedidos().ToList();
 
-                    var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+                    ImprimirPedido(listaPedidos);
 
-	                pedidoRepository.ExcluirPedido(pedidoEncontrado);
+                    Console.WriteLine("Digite o código do pedido:");
+                    int pedidoId = int.Parse(Console.ReadLine());
 
-	                foreach (var item in itensDoPedido)
-	                {
-	                    itemPedidoRepository.ExcluirItemDoPedido(item);
-	                }
+                    var pedidoEncontrado = pedidoRepository.ConsultarPedido(pedidoId);
 
-	                Console.WriteLine("Pedido excluído com sucesso.");
-	            }
-	            else
-	            {
-	                Console.WriteLine("Pedido não localizado.");
-	            }
-	        }
+                    if (pedidoEncontrado != null)
+                    {
+                        var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
+
+                        pedidoRepository.ExcluirPedido(pedidoEncontrado);
+
+                        foreach (var item in itensDoPedido)
+                        {
+                            itemPedidoRepository.ExcluirItemDoPedido(item);
+                        }
+
+                        Console.WriteLine($"Pedido {pedidoId} excluído com sucesso.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Pedido {pedidoId} não localizado.");
+                    }
+
+                    perguntaUsuario:
+                    Console.Write("Deseja excluir outro pedido? (s/n):");
+                    respostaUsuario = Console.ReadLine();
+
+                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        AppUtils.MensagemRespostaInvalidaUsuario();
+                        goto perguntaUsuario;
+                    }
+
+                } while (respostaUsuario.Equals("s")) ;
+
+            }
             catch (InvalidOperationException ex)
             {
                 Console.WriteLine(ex.Message);
@@ -268,6 +419,8 @@ namespace ConsoleAppPedidos.Services
         {
             try
             {
+                string proximoIdentificador;
+
                 // Obtém o último pedido registrado no banco de dados
                 var ultimoPedido = pedidoRepository.ConsultarUltimoPedido();
 
@@ -297,13 +450,13 @@ namespace ConsoleAppPedidos.Services
                 }
 
                 // Gera o identificador para o novo pedido com base na próxima letra e número disponíveis
-                string proximoIdentificador = $"P_{proximaLetra}{proximoNumero.ToString("D3")}_C";
+                proximoIdentificador = $"P_{proximaLetra}{proximoNumero.ToString("D3")}_C";
 
                 return proximoIdentificador;
             }
             catch (InvalidOperationException ex)
             {
-                throw new InvalidOperationException(ex.Message);
+                return "P_A000_C";
             }
             catch (Exception ex)
             {
@@ -345,44 +498,45 @@ namespace ConsoleAppPedidos.Services
         }
 
         /// <summary>
-        /// Imprime os detalhes de um pedido, incluindo seus itens.
+        /// Imprime os detalhes de um ou mais pedidos, incluindo seus itens.
         /// </summary>
-        /// <param name="pedidoId">O ID do pedido a ser impresso.</param>
+        /// <param name="pedidos">A lista de pedidos a serem impressos.</param>
         /// <exception cref="InvalidOperationException">Exceção lançada quando ocorre um erro ao consultar o pedido ou seus itens, ou o pedido não é encontrado.</exception>
         /// <exception cref="Exception">Exceção genérica lançada quando ocorre um erro ao imprimir o pedido.</exception>
-        public void ImprimirPedido(int pedidoId)
+        public void ImprimirPedido(List<Pedido> pedidos)
         {
             try
             {
-                var pedido = pedidoRepository.ConsultarPedido(pedidoId);
-                var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedidoId);
-                var produtos = produtoRepository.ConsultarTodosProdutos().AsQueryable();
-
-                int contador = 1;
-
-                Console.WriteLine("###################################");
-
-                Console.Write(
-                    $"Cód. Pedido: {pedido.ID} | " +
-                    $"Identificador: {pedido.Identificador} | " +
-                    $"Descrição: {pedido.Descricao} | " +
-                    $"Valor total: {pedido.ValorTotal}\n");
-
-                foreach (var item in itensDoPedido)
+                foreach (var pedido in pedidos)
                 {
-                    var produto = produtos.FirstOrDefault(p => p.ID == item.ProdutoID);
+                    var itensDoPedido = itemPedidoRepository.ConsultarItensDoPedido(pedido.ID).ToList();
 
-                    Console.Write($"    Item : 00{contador}\n");
-                    Console.Write($"### Cod. Produto: {item.ProdutoID}\n");
-                    Console.Write($"### Produto: {item.Produto.Nome}\n");
-                    Console.Write($"### Categoria: {AppUtils.CarregarCategoriaProduto(produto.Categoria)}\n");
-                    Console.Write($"### Qtd: {item.Quantidade}\n");
-                    Console.Write($"### Vlr. Unit.: {item.Valor}\n");
+                    int contador = 1;
 
-                    contador++;
+                    Console.WriteLine("###################################");
+
+                    Console.Write(
+                        $"Cód. Pedido: {pedido.ID} | " +
+                        $"Identificador: {pedido.Identificador} | " +
+                        $"Descrição: {pedido.Descricao} | " +
+                        $"Valor total: {pedido.ValorTotal}\n");
+
+                    foreach (var item in itensDoPedido)
+                    {
+                        var produto = produtoRepository.ConsultarProduto(item.ProdutoID);
+
+                        Console.Write($"    Item : 00{contador}\n");
+                        Console.Write($"### Cod. Produto: {produto.ID}\n");
+                        Console.Write($"### Produto: {produto.Nome}\n");
+                        Console.Write($"### Categoria: {AppUtils.CarregarCategoriaProduto(produto.Categoria)}\n");
+                        Console.Write($"### Qtd: {item.Quantidade}\n");
+                        Console.Write($"### Vlr. Unit.: {item.Valor}\n");
+
+                        contador++;
+                    }
+
+                    Console.WriteLine("###################################");
                 }
-
-                Console.WriteLine("###################################");
             }
             catch (InvalidOperationException ex)
             {

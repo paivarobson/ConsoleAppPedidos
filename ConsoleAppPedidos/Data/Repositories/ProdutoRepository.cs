@@ -33,11 +33,27 @@ namespace ConsoleAppPedidos.Data.Repositories
             try
             {
                 dbContexto.Produtos.Add(produto);
+                SalvarProduto();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Salva as alterações feitas em um produto no banco de dados.
+        /// </summary>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao salvar o produto no banco de dados.</exception>
+        private void SalvarProduto()
+        {
+            try
+            {
                 dbContexto.SaveChanges();
             }
             catch (Exception ex)
             {
-                throw new Exception("Ocorreu um erro ao criar o produto no banco de dados.", ex);
+                throw new Exception("Ocorreu um erro ao salvar o produto no banco de dados.", ex);
             }
         }
 
@@ -45,22 +61,9 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta todos os produtos.
         /// </summary>
         /// <returns>Uma lista de produtos.</returns>
-        /// <exception cref="Exception">Ocorre quando há um erro ao consultar os produtos no banco de dados.</exception>
         public IQueryable<Produto> ConsultarTodosProdutos()
         {
-            try
-            {
-                var produtosEncontrados = dbContexto.Produtos.AsQueryable();
-
-                if (produtosEncontrados == null)
-                    throw new InvalidOperationException("Nenhum produto encontrado.");
-
-                return produtosEncontrados;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocorreu um erro ao consultar os produtos no banco de dados.", ex);
-            }
+            return dbContexto.Produtos.AsQueryable();
         }
 
         /// <summary>
@@ -68,17 +71,22 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="produtoId">O ID do produto.</param>
         /// <returns>O produto encontrado ou null se não encontrado.</returns>
-        /// <exception cref="Exception">Ocorre quando há um erro ao consultar o produto no banco de dados.</exception>
         public Produto ConsultarProduto(int produtoId)
+        {
+            return dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
+        }
+
+        /// <summary>
+        /// Verifica se um produto com o ID especificado existe no banco de dados.
+        /// </summary>
+        /// <param name="produtoId">ID do produto a ser verificado.</param>
+        /// <returns>True se o produto existir, False caso contrário.</returns>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao consultar o produto no banco de dados.</exception>
+        public bool ConsultarProdutoExiste(int produtoId)
         {
             try
             {
-                var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produtoId);
-
-                if (produtoEncontrado == null)
-                    throw new InvalidOperationException($"Produto com ID {produtoId} não encontrado.");
-
-                return produtoEncontrado;
+                return dbContexto.Produtos.Any(p => p.ID == produtoId);
             }
             catch (Exception ex)
             {
@@ -106,7 +114,7 @@ namespace ConsoleAppPedidos.Data.Repositories
                 produtoEncontrado.Nome = produto.Nome;
                 produtoEncontrado.Categoria = produto.Categoria;
 
-                dbContexto.SaveChanges();
+                SalvarProduto();
 
                 return produtoAlterado;
 
@@ -127,7 +135,7 @@ namespace ConsoleAppPedidos.Data.Repositories
             try
             {
                 dbContexto.Produtos.Remove(produto);
-                dbContexto.SaveChanges();
+                SalvarProduto();
             }
             catch (Exception ex)
             {

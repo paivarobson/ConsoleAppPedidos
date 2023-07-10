@@ -90,11 +90,27 @@ namespace ConsoleAppPedidos.Data.Repositories
 
                 novoItem.PedidoID = pedidoId;
                 dbContexto.ItensDePedido.Add(novoItem);
-                dbContexto.SaveChanges();
+                SalvarItemPedido();
             }
             catch (Exception ex)
             {
                 throw new Exception("Ocorreu um erro ao adicionar o item ao pedido.", ex);
+            }
+        }
+
+        /// <summary>
+        /// Salva as alterações feitas em um item do pedido no banco de dados.
+        /// </summary>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao salvar o item do pedido no banco de dados.</exception>
+        private void SalvarItemPedido()
+        {
+            try
+            {
+                dbContexto.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao salvar o item do pedido no banco de dados.", ex);
             }
         }
 
@@ -123,7 +139,7 @@ namespace ConsoleAppPedidos.Data.Repositories
                 }
 
                 dbContexto.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
-                dbContexto.SaveChanges();
+                SalvarItemPedido();
             }
             catch (Exception ex)
             {
@@ -147,7 +163,7 @@ namespace ConsoleAppPedidos.Data.Repositories
                 }
 
                 dbContexto.ItensDePedido.Remove(itemDoPedido);
-                dbContexto.SaveChanges();
+                SalvarItemPedido();
             }
             catch (Exception ex)
             {

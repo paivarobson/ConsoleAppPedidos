@@ -33,7 +33,7 @@ namespace ConsoleAppPedidos.Data.Repositories
             try
             {
                 dbContexto.Pedidos.Add(pedido);
-                dbContexto.SaveChanges();
+                SalvarPedido();
             }
             catch (Exception ex)
             {
@@ -41,11 +41,23 @@ namespace ConsoleAppPedidos.Data.Repositories
             }
         }
 
+        public void SalvarPedido()
+        {
+            try
+            {
+                dbContexto.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro ao salvar o pedido no banco de dados.", ex);
+            }
+        }
+
         /// <summary>
         /// Consulta todos os pedidos.
         /// </summary>
         /// <returns>Uma consulta de todos os pedidos.</returns>
-        public IQueryable<Pedido> ConsultarPedidos()
+        public IQueryable<Pedido> ConsultarTodosPedidos()
         {
             return dbContexto.Pedidos.AsQueryable();
         }
@@ -55,23 +67,9 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// </summary>
         /// <param name="pedidoId">O ID do pedido.</param>
         /// <returns>O pedido encontrado ou null se não encontrado.</returns>
-        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao consultar o pedido no banco de dados.</exception>
         public Pedido ConsultarPedido(int pedidoId)
         {
-            try
-            {
-                var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
-
-                if (pedidoEncontrado == null)
-                    throw new InvalidOperationException($"Pedido com ID {pedidoId} não encontrado.");
-
-                return pedidoEncontrado;
-
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocorreu um erro ao consultar o pedido no banco de dados.", ex);
-            }
+            return dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedidoId);
         }
 
         /// <summary>
@@ -124,22 +122,14 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta o último pedido cadastrado.
         /// </summary>
         /// <returns>O último pedido cadastrado ou null se não houver pedidos.</returns>
-        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao consultar o último pedido no banco de dados.</exception>
         public Pedido ConsultarUltimoPedido()
         {
-            try
-            {
-                var ultimoPedido = dbContexto.Pedidos.OrderByDescending(p => p.ID).FirstOrDefault();
+            var ultimoPedido = dbContexto.Pedidos.OrderByDescending(p => p.ID).FirstOrDefault();
 
-                if (ultimoPedido == null)
-                    throw new InvalidOperationException("Não há pedidos cadastrados.");
+            if (ultimoPedido == null)
+                throw new InvalidOperationException("Não há pedidos cadastrados.");
 
-                return ultimoPedido;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Ocorreu um erro ao consultar o último pedido.", ex);
-            }
+            return ultimoPedido;
         }
     }
 }

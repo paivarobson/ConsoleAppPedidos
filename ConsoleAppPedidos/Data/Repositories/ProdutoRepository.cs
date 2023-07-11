@@ -1,5 +1,4 @@
 ﻿using ConsoleAppPedidos.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos.Data.Repositories
 {

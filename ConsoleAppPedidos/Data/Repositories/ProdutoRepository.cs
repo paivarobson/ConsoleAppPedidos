@@ -1,11 +1,12 @@
-﻿using ConsoleAppPedidos.Models;
+﻿using ConsoleAppPedidos.Interfaces;
+using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Data.Repositories
 {
     /// <summary>
     /// Classe repositório para manipulação de dados da entidade Produto.
     /// </summary>
-    public class ProdutoRepository
+    public class ProdutoRepository : IProdutoRepository
     {
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os produtos.
@@ -44,7 +45,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Salva as alterações feitas em um produto no banco de dados.
         /// </summary>
         /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao salvar o produto no banco de dados.</exception>
-        private void SalvarProduto()
+        public void SalvarProduto()
         {
             try
             {
@@ -60,7 +61,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Consulta todos os produtos.
         /// </summary>
         /// <returns>Uma lista de produtos.</returns>
-        public IQueryable<Produto> ConsultarTodosProdutos()
+        public IEnumerable<Produto> ConsultarTodosProdutos()
         {
             return dbContexto.Produtos.AsQueryable();
         }

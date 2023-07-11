@@ -15,6 +15,7 @@
     <None Remove="Data\Context\" />
     <None Remove="Services\" />
     <None Remove="Utils\" />
+    <None Remove="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -23,6 +24,7 @@
     <Folder Include="Data\Context\" />
     <Folder Include="Services\" />
     <Folder Include="Utils\" />
+    <Folder Include="Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">

@@ -104,9 +104,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         {
             try
             {
-                bool produtoAlterado = false;
-
-                var produtoEncontrado = dbContexto.Produtos.FirstOrDefault(p => p.ID == produto.ID);
+                var produtoEncontrado = dbContexto.Produtos.Find(produto.ID);
 
                 if (produtoEncontrado == null)
                     throw new InvalidOperationException($"Produto com ID {produto.ID} não encontrado.");
@@ -116,7 +114,7 @@ namespace ConsoleAppPedidos.Data.Repositories
 
                 SalvarProduto();
 
-                return produtoAlterado;
+                return true;
 
             }
             catch (Exception ex)

@@ -80,7 +80,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         {
             try
             {
-                var pedidoEncontrado = dbContexto.Pedidos.FirstOrDefault(p => p.ID == pedido.ID);
+                var pedidoEncontrado = dbContexto.Pedidos.Find(pedido.ID);
 
                 if (pedidoEncontrado == null)
                     throw new InvalidOperationException($"Pedido com ID {pedido.ID} não encontrado.");

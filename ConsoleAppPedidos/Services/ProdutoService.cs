@@ -90,7 +90,12 @@ namespace ConsoleAppPedidos.Services
             }
         }
 
-        internal void ConsultarTodosProdutos()
+        /// <summary>
+        /// Consulta e imprime todos os produtos.
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Exceção lançada quando ocorre um erro ao consultar os produtos.</exception>
+        /// <exception cref="Exception">Exceção genérica lançada quando ocorre um erro ao consultar os produtos.</exception>
+        public void ConsultarTodosProdutos()
         {
             try
             {

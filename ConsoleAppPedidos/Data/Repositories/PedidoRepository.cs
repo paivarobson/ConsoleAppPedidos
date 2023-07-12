@@ -40,6 +40,10 @@ namespace ConsoleAppPedidos.Data.Repositories
             }
         }
 
+        /// <summary>
+        /// Salva as alterações feitas em um pedido no banco de dados.
+        /// </summary>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao salvar o pedido no banco de dados.</exception>
         public void SalvarPedido()
         {
             try

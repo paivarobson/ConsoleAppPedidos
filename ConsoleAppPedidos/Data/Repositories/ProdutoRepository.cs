@@ -27,7 +27,7 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// Cria um novo produto.
         /// </summary>
         /// <param name="produto">O produto a ser criado.</param>
-        /// <exception cref="Exception">Ocorre quando há um erro ao criar o produto no banco de dados.</exception>
+        /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao criar o produto no banco de dados.</exception>
         public void CriarProduto(Produto produto)
         {
             try

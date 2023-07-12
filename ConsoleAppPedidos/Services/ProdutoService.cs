@@ -1,5 +1,6 @@
 ﻿using ConsoleAppPedidos.Data;
 using ConsoleAppPedidos.Data.Repositories;
+using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
@@ -7,7 +8,7 @@ namespace ConsoleAppPedidos.Services
     /// <summary>
     /// Classe responsável por realizar operações relacionadas a produtos.
     /// </summary>
-    public class ProdutoService
+    public class ProdutoService : IProdutoService
     {
         private readonly AppDbContexto dbContexto;
         private readonly ProdutoRepository produtoRepository;
@@ -348,7 +349,7 @@ namespace ConsoleAppPedidos.Services
         /// <summary>
         /// Imprime os detalhes de um produto.
         /// </summary>
-        /// <param name="produtoId">O ID do produto a ser impresso.</param>
+        /// <param name="listaProdutos">Lista de produtos a serem impressos.</param>
         /// <exception cref="InvalidOperationException">Exceção lançada quando ocorre um erro ao consultar o produto ou o produto não é encontrado.</exception>
         /// <exception cref="Exception">Exceção genérica lançada quando ocorre um erro ao imprimir o produto.</exception>
         public void ImprimirProduto(List<Produto> listaProdutos)

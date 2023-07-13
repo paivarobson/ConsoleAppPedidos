@@ -1,4 +1,6 @@
-﻿using ConsoleAppPedidos.Services;
+﻿using ConsoleAppPedidos.Interfaces;
+using ConsoleAppPedidos.Interfaces.Services;
+using ConsoleAppPedidos.Services;
 
 namespace ConsoleAppPedidos
 {
@@ -7,10 +9,17 @@ namespace ConsoleAppPedidos
     /// </summary>
     public class MenuOpcoes
     {
+        private readonly IProdutoService produtoService;
+
+        public MenuOpcoes(IProdutoService produtoService)
+        {
+            this.produtoService = produtoService;
+        }
+
         /// <summary>
         /// Exibe o menu principal e permite a seleção de opções.
         /// </summary>
-        public static void ExibirMenuPrincipal()
+        public void ExibirMenuPrincipal()
         {
             while (true)
             {
@@ -119,10 +128,8 @@ namespace ConsoleAppPedidos
         /// <summary>
         /// Exibe o menu de opções relacionadas a produtos e permite a seleção de opções.
         /// </summary>
-        private static void MenuProduto()
+        private void MenuProduto()
         {
-            var produtoService = new ProdutoService();
-
             while (true)
             {
                 Console.WriteLine("Opções do CRUD:");

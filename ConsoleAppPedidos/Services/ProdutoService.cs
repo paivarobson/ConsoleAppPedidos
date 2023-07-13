@@ -1,5 +1,6 @@
 ﻿using ConsoleAppPedidos.Data;
 using ConsoleAppPedidos.Data.Repositories;
+using ConsoleAppPedidos.Interfaces;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 
@@ -11,16 +12,16 @@ namespace ConsoleAppPedidos.Services
     public class ProdutoService : IProdutoService
     {
         private readonly AppDbContexto dbContexto;
-        private readonly ProdutoRepository produtoRepository;
+        private readonly IProdutoRepository produtoRepository;
         private readonly ItemDoPedidoRepository itemPedidoRepository;
 
         /// <summary>
         /// Construtor da classe ProdutoService.
         /// </summary>
-        public ProdutoService()
+        public ProdutoService(IProdutoRepository produtoRepository)
         {
             dbContexto = new AppDbContexto();
-            produtoRepository = new ProdutoRepository(dbContexto);
+            this.produtoRepository = produtoRepository;
             itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
         }
 

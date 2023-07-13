@@ -12,14 +12,14 @@ namespace ConsoleAppPedidos.Data.Repositories
         /// <summary>
         /// Propriedade contexto do banco de dados usado para acessar os produtos.
         /// </summary>
-        private readonly AppDbContexto dbContexto;
+        private readonly IAppDbContexto dbContexto;
 
         /// <summary>
         /// Construtor da classe ProdutoRepository.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
         /// <exception cref="ArgumentNullException">Exceção lançada quando o dbContexto é nulo.</exception>
-        public ProdutoRepository(AppDbContexto dbContexto)
+        public ProdutoRepository(IAppDbContexto dbContexto)
         {
             this.dbContexto = dbContexto ?? throw new ArgumentNullException(nameof(dbContexto));
         }

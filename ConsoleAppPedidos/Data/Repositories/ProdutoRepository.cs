@@ -1,4 +1,5 @@
 ﻿using ConsoleAppPedidos.Interfaces;
+using ConsoleAppPedidos.Interfaces.Data;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Data.Repositories

@@ -1,12 +1,13 @@
-﻿using ConsoleAppPedidos.Models;
+﻿using ConsoleAppPedidos.Interfaces.Data;
+using ConsoleAppPedidos.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos.Data
 {
     /// <summary>
-    /// Classe que configura o contexto do banco de dados.
+    /// Classe que implementa o contexto do banco de dados da aplicação.
     /// </summary>
-    public class AppDbContexto : DbContext
+    public class AppDbContexto : DbContext, IAppDbContexto
     {
         /// <summary>
         /// Propriedade que representa a tabela Produtos do banco de dados.
@@ -43,6 +44,5 @@ namespace ConsoleAppPedidos.Data
                 throw new Exception("Ocorreu um erro ao configurar o contexto do banco de dados.", ex);
             }
         }
-
     }
 }

@@ -23,7 +23,7 @@
         /// </summary>
         /// <param name="respostaUsuario">A resposta do usuário a ser validada.</param>
         /// <returns>True se a resposta for "y" ou "n", caso contrário retorna False.</returns>
-        public static bool ValidacaorespostaUsuario(string respostaUsuario)
+        public static bool ValidacaoRespostaUsuario(string respostaUsuario)
         {
             return respostaUsuario.Equals("s") || respostaUsuario.Equals("n");
         }

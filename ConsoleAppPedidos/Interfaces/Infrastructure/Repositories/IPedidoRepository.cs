@@ -1,6 +1,6 @@
 ﻿using ConsoleAppPedidos.Models;
 
-namespace ConsoleAppPedidos.Interfaces.Infrastructure
+namespace ConsoleAppPedidos.Interfaces.Infrastructure.Repositories
 {
     /// <summary>
     /// Interface responsável por definir as operações de acesso a dados relacionadas a pedidos.

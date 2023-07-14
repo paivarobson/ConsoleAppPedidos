@@ -1,10 +1,11 @@
-﻿using ConsoleAppPedidos.Interfaces.Infrastructure;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Data;
+using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Infrastructure.Repositories
 {
     /// <summary>
-    /// Classe repositório para manipulação de dados da entidade Produto.
+    /// Classe de repositório para manipulação de dados da entidade Produto.
     /// </summary>
     public class ProdutoRepository : IProdutoRepository
     {
@@ -20,7 +21,14 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
         /// <exception cref="ArgumentNullException">Exceção lançada quando o dbContexto é nulo.</exception>
         public ProdutoRepository(IAppDbContexto dbContexto)
         {
-            this.dbContexto = dbContexto ?? throw new ArgumentNullException(nameof(dbContexto));
+            try
+            {
+                this.dbContexto = dbContexto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro no construtor do ProdutoRepository", ex);
+            }
         }
 
         /// <summary>

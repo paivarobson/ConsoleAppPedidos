@@ -87,7 +87,7 @@ namespace ConsoleAppPedidos
                             Console.WriteLine("Deseja criar novo pedido? (s/n)");
                             respostaUsuario = Console.ReadLine();
 
-                            if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                            if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                             {
                                 continue;
                             }

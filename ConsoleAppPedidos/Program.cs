@@ -1,6 +1,7 @@
-﻿using ConsoleAppPedidos.Infrastructure;
+﻿using ConsoleAppPedidos.Infrastructure.Data;
 using ConsoleAppPedidos.Infrastructure.Repositories;
-using ConsoleAppPedidos.Interfaces.Infrastructure;
+using ConsoleAppPedidos.Interfaces.Infrastructure.Data;
+using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ namespace ConsoleAppPedidos
                 using (var serviceProvider = new ServiceCollection()
                 .AddSingleton<IAppDbContexto, AppDbContexto>()
                 .AddSingleton<IPedidoRepository, PedidoRepository>()
+                .AddSingleton<IItemDoPedidoRepository, ItemDoPedidoRepository>()
                 .AddSingleton<IPedidoService, PedidoService>()
                 .AddSingleton<IProdutoRepository, ProdutoRepository>()
                 .AddSingleton<IProdutoService, ProdutoService>()

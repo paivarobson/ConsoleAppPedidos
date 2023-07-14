@@ -1,25 +1,34 @@
-﻿using ConsoleAppPedidos.Models;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Data;
+using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
+using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Infrastructure.Repositories
 {
     /// <summary>
-    /// Classe repositório para manipulação de dados da entidade ItemDoPedido.
+    /// Classe de repositório para manipulação de dados da entidade ItemDoPedido.
     /// </summary>
-    public class ItemDoPedidoRepository
+    public class ItemDoPedidoRepository : IItemDoPedidoRepository
     {
-		/// <summary>
-	    /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
-	    /// </summary>    
-        private readonly AppDbContexto dbContexto;
+        /// <summary>
+        /// Propriedade contexto do banco de dados usado para acessar os itens do pedido.
+        /// </summary>    
+        private readonly IAppDbContexto dbContexto;
 
         /// <summary>
         /// Construtor da classe ItemDoPedidoRepository.
         /// </summary>
         /// <param name="dbContexto">Contexto do banco de dados.</param>
         /// <exception cref="ArgumentNullException">Exceção lançada quando o dbContexto é nulo.</exception>
-        public ItemDoPedidoRepository(AppDbContexto dbContexto)
+        public ItemDoPedidoRepository(IAppDbContexto dbContexto)
         {
-            this.dbContexto = dbContexto ?? throw new ArgumentNullException(nameof(dbContexto));
+            try
+            {
+                this.dbContexto = dbContexto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro no construtor do ItemDoPedidoRepository", ex);
+            }
         }
 
         /// <summary>
@@ -101,7 +110,7 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
         /// Salva as alterações feitas em um item do pedido no banco de dados.
         /// </summary>
         /// <exception cref="Exception">Exceção lançada quando ocorre um erro ao salvar o item do pedido no banco de dados.</exception>
-        private void SalvarItemPedido()
+        public void SalvarItemPedido()
         {
             try
             {
@@ -137,7 +146,7 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
                     throw new ArgumentException("O item do pedido não existe ou não está associado ao pedido especificado.", nameof(itemDePedidoId));
                 }
 
-                dbContexto.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
+                dbContexto.ItensDePedido.Entry(itemEncontrado).CurrentValues.SetValues(itemDePedidoAtualizado);
                 SalvarItemPedido();
             }
             catch (Exception ex)

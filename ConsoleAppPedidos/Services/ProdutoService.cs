@@ -1,6 +1,4 @@
-﻿using ConsoleAppPedidos.Infrastructure;
-using ConsoleAppPedidos.Infrastructure.Repositories;
-using ConsoleAppPedidos.Interfaces.Infrastructure;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 
@@ -11,18 +9,16 @@ namespace ConsoleAppPedidos.Services
     /// </summary>
     public class ProdutoService : IProdutoService
     {
-        private readonly AppDbContexto dbContexto;
         private readonly IProdutoRepository produtoRepository;
-        private readonly ItemDoPedidoRepository itemPedidoRepository;
+        private readonly IItemDoPedidoRepository itemPedidoRepository;
 
         /// <summary>
         /// Construtor da classe ProdutoService.
         /// </summary>
-        public ProdutoService(IProdutoRepository produtoRepository)
+        public ProdutoService(IProdutoRepository produtoRepository, IItemDoPedidoRepository itemPedidoRepository)
         {
-            dbContexto = new AppDbContexto();
             this.produtoRepository = produtoRepository;
-            itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
+            this.itemPedidoRepository = itemPedidoRepository;
         }
 
         /// <summary>
@@ -60,7 +56,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja adicionar novo produto? (s/n): ");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -158,7 +154,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja consultar novo produto? (s/n): ");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -224,7 +220,7 @@ namespace ConsoleAppPedidos.Services
                     Console.WriteLine("Deseja excluir outro produto? (s/n)");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -325,7 +321,7 @@ namespace ConsoleAppPedidos.Services
                     Console.WriteLine("Deseja alterar novo produto? (s/n)");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }

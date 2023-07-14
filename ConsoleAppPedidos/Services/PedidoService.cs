@@ -1,6 +1,4 @@
-﻿using ConsoleAppPedidos.Infrastructure;
-using ConsoleAppPedidos.Infrastructure.Repositories;
-using ConsoleAppPedidos.Interfaces.Infrastructure;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 
@@ -11,19 +9,17 @@ namespace ConsoleAppPedidos.Services
     /// </summary>
     public class PedidoService : IPedidoService
     {
-        private readonly AppDbContexto dbContexto;
-
         private readonly IPedidoRepository pedidoRepository;
-        private readonly ItemDoPedidoRepository itemPedidoRepository;
+        private readonly IItemDoPedidoRepository itemPedidoRepository;
         private readonly IProdutoRepository produtoRepository;
 
         /// <summary>
         /// Construtor da classe PedidoService.
         /// </summary>
-        public PedidoService(IPedidoRepository pedidoRepository, IProdutoRepository produtoRepository)
+        public PedidoService(IPedidoRepository pedidoRepository, IItemDoPedidoRepository itemPedidoRepository, IProdutoRepository produtoRepository)
         {
             this.pedidoRepository = pedidoRepository;
-            itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
+            this.itemPedidoRepository = itemPedidoRepository;
             this.produtoRepository = produtoRepository;
         }
 
@@ -127,7 +123,7 @@ namespace ConsoleAppPedidos.Services
                         Console.Write("Deseja adicionar novo item? (s/n):");
                         respostaUsuario = Console.ReadLine();                        
 
-                        if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                        if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                         {
                             continue;
                         }
@@ -145,9 +141,9 @@ namespace ConsoleAppPedidos.Services
                 {
                     pedidoRepository.CriarPedido(pedido);
 
-                    foreach (var itemDoProduto in listaItensPedido)
+                    foreach (var itemDoPedido in listaItensPedido)
                     {
-                        itemPedidoRepository.AdicionarItemAoPedido(pedido.ID, itemDoProduto);
+                        itemPedidoRepository.AdicionarItemAoPedido(pedido.ID, itemDoPedido);
                     }
 
                     pedido.ValorTotal = CalcularValorTotal(pedido.ID);
@@ -237,7 +233,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja consultar novo pedido? (s/n):");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -317,7 +313,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja alterar outro pedido? (s/n):");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -388,7 +384,7 @@ namespace ConsoleAppPedidos.Services
                     Console.Write("Deseja excluir outro pedido? (s/n):");
                     respostaUsuario = Console.ReadLine();
 
-                    if (AppUtils.ValidacaorespostaUsuario(respostaUsuario))
+                    if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                     {
                         continue;
                     }
@@ -479,7 +475,7 @@ namespace ConsoleAppPedidos.Services
 
                 if (pedido != null)
                 {
-                    double valorTotal = dbContexto.ItensDePedido
+                    double valorTotal = pedido.ItensDoPedido
                         .Where(i => i.PedidoID == pedidoId)
                         .Sum(i => i.Quantidade * i.Valor);
 

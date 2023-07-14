@@ -1,6 +1,6 @@
 ﻿using ConsoleAppPedidos.Models;
 
-namespace ConsoleAppPedidos.Data.Repositories
+namespace ConsoleAppPedidos.Infrastructure.Repositories
 {
     /// <summary>
     /// Classe repositório para manipulação de dados da entidade ItemDoPedido.

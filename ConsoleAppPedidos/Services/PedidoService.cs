@@ -1,5 +1,5 @@
-﻿using ConsoleAppPedidos.Data;
-using ConsoleAppPedidos.Data.Repositories;
+﻿using ConsoleAppPedidos.Infrastructure;
+using ConsoleAppPedidos.Infrastructure.Repositories;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services

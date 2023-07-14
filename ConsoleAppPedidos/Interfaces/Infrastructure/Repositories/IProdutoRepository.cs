@@ -1,7 +1,6 @@
 ﻿using ConsoleAppPedidos.Models;
-using System.Collections.Generic;
 
-namespace ConsoleAppPedidos.Interfaces
+namespace ConsoleAppPedidos.Interfaces.Infrastructure
 {
     /// <summary>
     /// Interface responsável por definir as operações de acesso a dados relacionadas aos produtos.

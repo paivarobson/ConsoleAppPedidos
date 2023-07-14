@@ -1,8 +1,7 @@
-﻿using ConsoleAppPedidos.Interfaces;
-using ConsoleAppPedidos.Interfaces.Data;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure;
 using ConsoleAppPedidos.Models;
 
-namespace ConsoleAppPedidos.Data.Repositories
+namespace ConsoleAppPedidos.Infrastructure.Repositories
 {
     /// <summary>
     /// Classe repositório para manipulação de dados da entidade Produto.

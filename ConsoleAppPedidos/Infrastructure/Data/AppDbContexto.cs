@@ -1,8 +1,8 @@
-﻿using ConsoleAppPedidos.Interfaces.Data;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure;
 using ConsoleAppPedidos.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace ConsoleAppPedidos.Data
+namespace ConsoleAppPedidos.Infrastructure
 {
     /// <summary>
     /// Classe que implementa o contexto do banco de dados da aplicação.

@@ -1,6 +1,6 @@
-﻿using ConsoleAppPedidos.Data;
-using ConsoleAppPedidos.Data.Repositories;
-using ConsoleAppPedidos.Interfaces;
+﻿using ConsoleAppPedidos.Infrastructure;
+using ConsoleAppPedidos.Infrastructure.Repositories;
+using ConsoleAppPedidos.Interfaces.Infrastructure;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 

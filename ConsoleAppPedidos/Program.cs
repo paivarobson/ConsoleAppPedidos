@@ -1,7 +1,7 @@
-﻿using ConsoleAppPedidos.Data;
-using ConsoleAppPedidos.Data.Repositories;
+﻿using ConsoleAppPedidos.Infrastructure;
+using ConsoleAppPedidos.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces;
-using ConsoleAppPedidos.Interfaces.Data;
+using ConsoleAppPedidos.Interfaces.Infrastructure;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Services;
 using Microsoft.Extensions.DependencyInjection;

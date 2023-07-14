@@ -9,28 +9,26 @@
 
   <ItemGroup>
     <None Remove="Models\" />
-    <None Remove="Data\" />
     <None Remove="ConsoleAppPedidos.csproj" />
-    <None Remove="Data\Repositories\" />
-    <None Remove="Data\Context\" />
     <None Remove="Services\" />
     <None Remove="Utils\" />
     <None Remove="Interfaces\" />
     <None Remove="Interfaces\Services\" />
-    <None Remove="Interfaces\Repositories\" />
-    <None Remove="Interfaces\Data\" />
+    <None Remove="Infrastructure\" />
+    <None Remove="Interfaces\Infrastructure\" />
+    <None Remove="Interfaces\Infrastructure\Data\" />
+    <None Remove="Interfaces\Infrastructure\Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Data\" />
-    <Folder Include="Data\Repositories\" />
-    <Folder Include="Data\Context\" />
     <Folder Include="Services\" />
     <Folder Include="Utils\" />
     <Folder Include="Interfaces\" />
     <Folder Include="Interfaces\Services\" />
-    <Folder Include="Interfaces\Repositories\" />
-    <Folder Include="Interfaces\Data\" />
+    <Folder Include="Infrastructure\" />
+    <Folder Include="Interfaces\Infrastructure\" />
+    <Folder Include="Interfaces\Infrastructure\Data\" />
+    <Folder Include="Interfaces\Infrastructure\Repositories\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">

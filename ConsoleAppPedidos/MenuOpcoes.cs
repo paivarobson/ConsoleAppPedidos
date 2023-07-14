@@ -1,5 +1,4 @@
-﻿using ConsoleAppPedidos.Interfaces;
-using ConsoleAppPedidos.Interfaces.Services;
+﻿using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Services;
 
 namespace ConsoleAppPedidos
@@ -9,10 +8,12 @@ namespace ConsoleAppPedidos
     /// </summary>
     public class MenuOpcoes
     {
+        private readonly IPedidoService pedidoService;
         private readonly IProdutoService produtoService;
 
-        public MenuOpcoes(IProdutoService produtoService)
+        public MenuOpcoes(IPedidoService pedidoService, IProdutoService produtoService)
         {
+            this.pedidoService = pedidoService;
             this.produtoService = produtoService;
         }
 
@@ -56,10 +57,8 @@ namespace ConsoleAppPedidos
         /// <summary>
         /// Exibe o menu de opções relacionadas a pedidos e permite a seleção de opções.
         /// </summary>
-        private static void MenuPedido()
+        private void MenuPedido()
         {
-            var pedidoService = new PedidoService();
-
             while (true)
             {
                 Console.WriteLine("Opções do CRUD:");
@@ -81,7 +80,8 @@ namespace ConsoleAppPedidos
                     case "1":
                         string respostaUsuario;
                         do
-                        {pedidoService.CriarPedido();
+                        {
+                            pedidoService.CriarPedido();
 
                             perguntaUsuario:
                             Console.WriteLine("Deseja criar novo pedido? (s/n)");
@@ -180,7 +180,7 @@ namespace ConsoleAppPedidos
         /// <summary>
         /// Aguarda a confirmação do usuário antes de continuar.
         /// </summary>
-        private static void AguardarConfirmacao()
+        private void AguardarConfirmacao()
         {
             Console.WriteLine("Pressione Enter para continuar...");
             Console.ReadLine();

@@ -1,5 +1,7 @@
 ﻿using ConsoleAppPedidos.Infrastructure;
 using ConsoleAppPedidos.Infrastructure.Repositories;
+using ConsoleAppPedidos.Interfaces.Infrastructure;
+using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
@@ -7,22 +9,22 @@ namespace ConsoleAppPedidos.Services
     /// <summary>
     /// Classe responsável por realizar operações relacionadas a pedidos.
     /// </summary>
-    public class PedidoService
+    public class PedidoService : IPedidoService
     {
         private readonly AppDbContexto dbContexto;
-        private readonly PedidoRepository pedidoRepository;
+
+        private readonly IPedidoRepository pedidoRepository;
         private readonly ItemDoPedidoRepository itemPedidoRepository;
-        private readonly ProdutoRepository produtoRepository;
+        private readonly IProdutoRepository produtoRepository;
 
         /// <summary>
         /// Construtor da classe PedidoService.
         /// </summary>
-        public PedidoService()
+        public PedidoService(IPedidoRepository pedidoRepository, IProdutoRepository produtoRepository)
         {
-            dbContexto = new AppDbContexto();
-            pedidoRepository = new PedidoRepository(dbContexto);
+            this.pedidoRepository = pedidoRepository;
             itemPedidoRepository = new ItemDoPedidoRepository(dbContexto);
-            produtoRepository = new ProdutoRepository(dbContexto);
+            this.produtoRepository = produtoRepository;
         }
 
         /// <summary>
@@ -195,7 +197,7 @@ namespace ConsoleAppPedidos.Services
         /// <summary>
         /// Consulta um pedido pelo seu ID.
         /// </summary>
-        /// <param name="pedidoId">ID do pedido a ser consultado.</param>
+        /// <param name="pedidoId">ID do pedido a ser consultado (opcional).</param>
         public void ConsultarPedido(int pedidoId = 0)
         {
             try

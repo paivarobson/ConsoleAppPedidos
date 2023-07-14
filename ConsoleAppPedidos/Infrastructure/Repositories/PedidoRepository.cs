@@ -1,25 +1,33 @@
-﻿using ConsoleAppPedidos.Models;
+﻿using ConsoleAppPedidos.Interfaces.Infrastructure;
+using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Infrastructure.Repositories
 {
     /// <summary>
-    /// Classe repositório para manipulação de dados da entidade Pedido.
+    /// Classe de repositório para manipulação de dados da entidade Pedido.
     /// </summary>
-    public class PedidoRepository
+    public class PedidoRepository : IPedidoRepository
     {
         /// <summary>
-        /// Propriedade contexto do banco de dados usado para acessar os pedidos.
+        /// Classe de repositório para manipulação de dados da entidade Pedido.
         /// </summary>
-        private readonly AppDbContexto dbContexto;
+        private readonly IAppDbContexto dbContexto;
 
         /// <summary>
         /// Construtor da classe PedidoRepository.
         /// </summary>
-        /// <param name="dbContexto">Contexto do banco de dados.</param>
+        /// <param name="dbContexto">O contexto do banco de dados.</param>
         /// <exception cref="ArgumentNullException">Exceção lançada quando o dbContexto é nulo.</exception>
-        public PedidoRepository(AppDbContexto dbContexto)
+        public PedidoRepository(IAppDbContexto dbContexto)
         {
-            this.dbContexto = dbContexto ?? throw new ArgumentNullException(nameof(dbContexto));
+            try
+            {
+                this.dbContexto = dbContexto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Ocorreu um erro no construtor do PedidoRepository", ex);
+            }
         }
 
         /// <summary>
@@ -89,8 +97,8 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
                 if (pedidoEncontrado == null)
                     throw new InvalidOperationException($"Pedido com ID {pedido.ID} não encontrado.");
 
-                dbContexto.Entry(pedidoEncontrado).CurrentValues.SetValues(pedido);
-                dbContexto.SaveChanges();
+                dbContexto.Pedidos.Entry(pedidoEncontrado).CurrentValues.SetValues(pedido);
+                SalvarPedido();
             }
             catch (Exception ex)
             {
@@ -113,7 +121,7 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
                     throw new InvalidOperationException($"Pedido com ID {pedido.ID} não encontrado.");
 
                 dbContexto.Pedidos.Remove(pedidoEncontrado);
-                dbContexto.SaveChanges();
+                SalvarPedido();
             }
             catch (Exception ex)
             {

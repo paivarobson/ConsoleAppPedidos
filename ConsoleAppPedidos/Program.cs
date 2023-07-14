@@ -1,6 +1,5 @@
 ﻿using ConsoleAppPedidos.Infrastructure;
 using ConsoleAppPedidos.Infrastructure.Repositories;
-using ConsoleAppPedidos.Interfaces;
 using ConsoleAppPedidos.Interfaces.Infrastructure;
 using ConsoleAppPedidos.Interfaces.Services;
 using ConsoleAppPedidos.Services;
@@ -23,17 +22,25 @@ namespace ConsoleAppPedidos
             {
                 using (var serviceProvider = new ServiceCollection()
                 .AddSingleton<IAppDbContexto, AppDbContexto>()
+                .AddSingleton<IPedidoRepository, PedidoRepository>()
+                .AddSingleton<IPedidoService, PedidoService>()
                 .AddSingleton<IProdutoRepository, ProdutoRepository>()
                 .AddSingleton<IProdutoService, ProdutoService>()
                 .BuildServiceProvider())
                 {
                     // Inicia a execução do programa exibindo o menu principal
-                    var menu = new MenuOpcoes(serviceProvider.GetRequiredService<IProdutoService>());
+                    var menu = new MenuOpcoes(
+                        serviceProvider.GetRequiredService<IPedidoService>(),
+                        serviceProvider.GetRequiredService<IProdutoService>());
 
                     menu.ExibirMenuPrincipal();
                 }
             }
             catch (InvalidOperationException ex)
+            {
+                Console.WriteLine(ex);
+            }
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
             }

@@ -23,6 +23,10 @@ namespace ConsoleAppPedidos.Interfaces.Infrastructure
         /// </summary>
         DbSet<ItemDoPedido> ItensDePedido { get; set; }
 
+        /// <summary>
+        /// Salva as alterações feitas no banco de dados.
+        /// </summary>
+        /// <returns>O número de registros afetados.</returns>
         int SaveChanges();
     }
 }

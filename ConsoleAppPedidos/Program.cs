@@ -23,18 +23,10 @@ namespace ConsoleAppPedidos
         {
             try
             {
-                using (var serviceProvider = new ServiceCollection()
-                    .AddSingleton<IAppDbContexto, AppDbContexto>()
-                    .AddSingleton<IPedidoFactory, PedidoFactory>()
-                    .AddSingleton<IPedidoRepository, PedidoRepository>()
-                    .AddSingleton<IItemDoPedidoRepository, ItemDoPedidoRepository>()
-                    .AddSingleton<IPedidoService, PedidoService>()
-                    .AddSingleton<IProdutoFactory, ProdutoFactory>()
-                    .AddSingleton<IProdutoRepository, ProdutoRepository>()
-                    .AddSingleton<IProdutoService, ProdutoService>()
-                    .BuildServiceProvider())
+                var serviceProvider = ConfigureServices();
+
+                using (serviceProvider.CreateScope())
                 {
-                    // Inicia a execução do programa exibindo o menu principal
                     var menu = new MenuOpcoes(
                         serviceProvider.GetRequiredService<IPedidoService>(),
                         serviceProvider.GetRequiredService<IProdutoService>());
@@ -48,7 +40,28 @@ namespace ConsoleAppPedidos
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Console.WriteLine("Ocorreu um erro ao tentar carregar Injeção de Dependências: ", ex);
+            }
+        }
+
+        private static IServiceProvider ConfigureServices()
+        {
+            try
+            {
+                return new ServiceCollection()
+                    .AddSingleton<IAppDbContexto, AppDbContexto>()
+                    .AddSingleton<IPedidoFactory, PedidoFactory>()
+                    .AddSingleton<IPedidoRepository, PedidoRepository>()
+                    .AddSingleton<IItemDoPedidoRepository, ItemDoPedidoRepository>()
+                    .AddSingleton<IPedidoService, PedidoService>()
+                    .AddSingleton<IProdutoFactory, ProdutoFactory>()
+                    .AddSingleton<IProdutoRepository, ProdutoRepository>()
+                    .AddSingleton<IProdutoService, ProdutoService>()
+                    .BuildServiceProvider();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

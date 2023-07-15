@@ -117,7 +117,7 @@ namespace ConsoleAppPedidos.Infrastructure.Repositories
                 if (produtoEncontrado == null)
                     throw new InvalidOperationException($"Produto com ID {produto.ID} não encontrado.");
 
-                produtoEncontrado.Nome = produto.Nome;
+                produtoEncontrado.Descricao = produto.Descricao;
                 produtoEncontrado.Categoria = produto.Categoria;
 
                 SalvarProduto();

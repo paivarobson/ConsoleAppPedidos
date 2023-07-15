@@ -16,12 +16,12 @@ namespace ConsoleAppPedidos.Models
         public int ID { get; set; }
 
         /// <summary>
-        /// Nome do Produto.
+        /// Descrição do Produto.
         /// </summary>
-        [Required(ErrorMessage = "O campo Nome é obrigatório.")]
-        [StringLength(255, ErrorMessage = "O campo Nome deve ter no máximo 255 caracteres.")]
+        [Required(ErrorMessage = "O campo Descrição é obrigatório.")]
+        [StringLength(255, ErrorMessage = "O campo Descrição deve ter no máximo 255 caracteres.")]
         [Column(TypeName = "varchar")]
-        public string Nome { get; set; }
+        public string Descricao { get; set; }
 
         /// <summary>
         /// Categoria do Produto.

@@ -444,7 +444,7 @@ namespace ConsoleAppPedidos.Services
 
                 return proximoIdentificador;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 return "P_A000_C";
             }

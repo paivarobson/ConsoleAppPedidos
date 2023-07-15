@@ -1,5 +1,6 @@
 ﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
+using ConsoleAppPedidos.Interfaces.Services.Factories;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
@@ -9,14 +10,16 @@ namespace ConsoleAppPedidos.Services
     /// </summary>
     public class ProdutoService : IProdutoService
     {
+        private readonly IProdutoFactory produtoFactory;
         private readonly IProdutoRepository produtoRepository;
         private readonly IItemDoPedidoRepository itemPedidoRepository;
 
         /// <summary>
         /// Construtor da classe ProdutoService.
         /// </summary>
-        public ProdutoService(IProdutoRepository produtoRepository, IItemDoPedidoRepository itemPedidoRepository)
+        public ProdutoService(IProdutoFactory produtoFactory, IProdutoRepository produtoRepository, IItemDoPedidoRepository itemPedidoRepository)
         {
+            this.produtoFactory = produtoFactory;
             this.produtoRepository = produtoRepository;
             this.itemPedidoRepository = itemPedidoRepository;
         }
@@ -40,15 +43,11 @@ namespace ConsoleAppPedidos.Services
                 do
                 {
                     Console.Write("Descrição do Produto: ");
-                    string nome = Console.ReadLine();
+                    string descricao = Console.ReadLine() ?? "Descrição do produto não foi informado";
                     Console.Write("Categoria (0 - Perecível ou 1 - Não perecível): ");
                     int categoria = int.Parse(Console.ReadLine());
 
-                    var novoProduto = new Produto
-                    {
-                        Nome = nome,
-                        Categoria = categoria
-                    };
+                    var novoProduto = produtoFactory.CriarProduto(descricao, categoria);
 
                     listaProdutos.Add(novoProduto);
 
@@ -292,7 +291,7 @@ namespace ConsoleAppPedidos.Services
                             var produtoAlterado = new Produto
                             {
                                 ID = produtoEncontrado.ID,
-                                Nome = descricao,
+                                Descricao = descricao,
                                 Categoria = categoria
                             };
 
@@ -359,7 +358,7 @@ namespace ConsoleAppPedidos.Services
 
                     Console.Write(
                         $"Cód. Produto: {item.ID} | " +
-                        $"Descrição: {item.Nome} | " +
+                        $"Descrição: {item.Descricao} | " +
                         $"Categoria: {AppUtils.CarregarCategoriaProduto(item.Categoria)}\n");
 
                     Console.WriteLine("###################################");

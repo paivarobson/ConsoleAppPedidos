@@ -18,6 +18,7 @@
     <None Remove="Interfaces\Infrastructure\" />
     <None Remove="Interfaces\Infrastructure\Data\" />
     <None Remove="Interfaces\Infrastructure\Repositories\" />
+    <None Remove="Infrastructure\Data\Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
@@ -29,6 +30,7 @@
     <Folder Include="Interfaces\Infrastructure\" />
     <Folder Include="Interfaces\Infrastructure\Data\" />
     <Folder Include="Interfaces\Infrastructure\Repositories\" />
+    <Folder Include="Infrastructure\Data\Migrations\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.8">

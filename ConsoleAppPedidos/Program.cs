@@ -3,7 +3,9 @@ using ConsoleAppPedidos.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Infrastructure.Data;
 using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
+using ConsoleAppPedidos.Interfaces.Services.Factories;
 using ConsoleAppPedidos.Services;
+using ConsoleAppPedidos.Services.Factories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ConsoleAppPedidos
@@ -22,13 +24,15 @@ namespace ConsoleAppPedidos
             try
             {
                 using (var serviceProvider = new ServiceCollection()
-                .AddSingleton<IAppDbContexto, AppDbContexto>()
-                .AddSingleton<IPedidoRepository, PedidoRepository>()
-                .AddSingleton<IItemDoPedidoRepository, ItemDoPedidoRepository>()
-                .AddSingleton<IPedidoService, PedidoService>()
-                .AddSingleton<IProdutoRepository, ProdutoRepository>()
-                .AddSingleton<IProdutoService, ProdutoService>()
-                .BuildServiceProvider())
+                    .AddSingleton<IAppDbContexto, AppDbContexto>()
+                    .AddSingleton<IPedidoFactory, PedidoFactory>()
+                    .AddSingleton<IPedidoRepository, PedidoRepository>()
+                    .AddSingleton<IItemDoPedidoRepository, ItemDoPedidoRepository>()
+                    .AddSingleton<IPedidoService, PedidoService>()
+                    .AddSingleton<IProdutoFactory, ProdutoFactory>()
+                    .AddSingleton<IProdutoRepository, ProdutoRepository>()
+                    .AddSingleton<IProdutoService, ProdutoService>()
+                    .BuildServiceProvider())
                 {
                     // Inicia a execução do programa exibindo o menu principal
                     var menu = new MenuOpcoes(

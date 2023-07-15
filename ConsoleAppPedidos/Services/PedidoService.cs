@@ -1,5 +1,6 @@
 ﻿using ConsoleAppPedidos.Interfaces.Infrastructure.Repositories;
 using ConsoleAppPedidos.Interfaces.Services;
+using ConsoleAppPedidos.Interfaces.Services.Factories;
 using ConsoleAppPedidos.Models;
 
 namespace ConsoleAppPedidos.Services
@@ -9,6 +10,7 @@ namespace ConsoleAppPedidos.Services
     /// </summary>
     public class PedidoService : IPedidoService
     {
+        private readonly IPedidoFactory pedidoFactory;
         private readonly IPedidoRepository pedidoRepository;
         private readonly IItemDoPedidoRepository itemPedidoRepository;
         private readonly IProdutoRepository produtoRepository;
@@ -16,8 +18,9 @@ namespace ConsoleAppPedidos.Services
         /// <summary>
         /// Construtor da classe PedidoService.
         /// </summary>
-        public PedidoService(IPedidoRepository pedidoRepository, IItemDoPedidoRepository itemPedidoRepository, IProdutoRepository produtoRepository)
+        public PedidoService(IPedidoFactory pedidoFactory, IPedidoRepository pedidoRepository, IItemDoPedidoRepository itemPedidoRepository, IProdutoRepository produtoRepository)
         {
+            this.pedidoFactory = pedidoFactory;
             this.pedidoRepository = pedidoRepository;
             this.itemPedidoRepository = itemPedidoRepository;
             this.produtoRepository = produtoRepository;
@@ -34,7 +37,6 @@ namespace ConsoleAppPedidos.Services
                 List<ItemDoPedido> listaItensPedido = new List<ItemDoPedido>();
 
                 string respostaUsuario;
-                int produtoIdInseridoPedido;
                 bool produtoCadastrado = false;
 
                 Console.WriteLine("Opção de criação de pedido selecionada.");
@@ -49,13 +51,9 @@ namespace ConsoleAppPedidos.Services
 
                     string identificador = GerarIdentificadorDoPedido();
                     Console.Write("Descrição: ");
-                    string descricao = Console.ReadLine();
+                    string descricao = Console.ReadLine() ?? "Descrição do produto não informada";
 
-                    var novoPedido = new Pedido
-                    {
-                        Identificador = identificador,
-                        Descricao = descricao
-                    };
+                    var novoPedido = pedidoFactory.CriarPedido(identificador, descricao);
 
                     listaPedidos.Add(novoPedido);
 
@@ -103,12 +101,7 @@ namespace ConsoleAppPedidos.Services
                                     valorUnitario = double.Parse(Console.ReadLine());
                                 }
 
-                                var novoItem = new ItemDoPedido
-                                {
-                                    ProdutoID = produtoId,
-                                    Quantidade = quantidade,
-                                    Valor = valorUnitario
-                                };
+                                var novoItem = pedidoFactory.AdicionarItem(produtoId, quantidade, valorUnitario);
 
                                 listaItensPedido.Add(novoItem);
                             }
@@ -121,7 +114,7 @@ namespace ConsoleAppPedidos.Services
 
                         perguntaUsuario:
                         Console.Write("Deseja adicionar novo item? (s/n):");
-                        respostaUsuario = Console.ReadLine();                        
+                        respostaUsuario = Console.ReadLine();
 
                         if (AppUtils.ValidacaoRespostaUsuario(respostaUsuario))
                         {
@@ -524,7 +517,7 @@ namespace ConsoleAppPedidos.Services
 
                         Console.Write($"    Item : 00{contador}\n");
                         Console.Write($"### Cod. Produto: {produto.ID}\n");
-                        Console.Write($"### Produto: {produto.Nome}\n");
+                        Console.Write($"### Produto: {produto.Descricao}\n");
                         Console.Write($"### Categoria: {AppUtils.CarregarCategoriaProduto(produto.Categoria)}\n");
                         Console.Write($"### Qtd: {item.Quantidade}\n");
                         Console.Write($"### Vlr. Unit.: {item.Valor}\n");

@@ -7,6 +7,7 @@ using ConsoleAppPedidos.Interfaces.Services.Factories;
 using ConsoleAppPedidos.Services;
 using ConsoleAppPedidos.Services.Factories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsoleAppPedidos
 {
@@ -23,15 +24,18 @@ namespace ConsoleAppPedidos
         {
             try
             {
+                CriarAtualizarBancoDeDados();
+
                 var serviceProvider = ConfigureServices();
 
-                using (serviceProvider.CreateScope())
+                using (var escopo = serviceProvider.CreateScope())
                 {
                     var menu = new MenuOpcoes(
-                        serviceProvider.GetRequiredService<IPedidoService>(),
-                        serviceProvider.GetRequiredService<IProdutoService>());
+                        escopo.ServiceProvider.GetRequiredService<IPedidoService>(),
+                        escopo.ServiceProvider.GetRequiredService<IProdutoService>());
 
                     menu.ExibirMenuPrincipal();
+
                 }
             }
             catch (InvalidOperationException ex)
@@ -40,7 +44,7 @@ namespace ConsoleAppPedidos
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Ocorreu um erro ao tentar carregar Injeção de Dependências: ", ex);
+                Console.WriteLine("Ocorreu um erro na inicialização do sistema: " + ex.Message);
             }
         }
 
@@ -58,6 +62,21 @@ namespace ConsoleAppPedidos
                     .AddSingleton<IProdutoRepository, ProdutoRepository>()
                     .AddSingleton<IProdutoService, ProdutoService>()
                     .BuildServiceProvider();
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        private static void CriarAtualizarBancoDeDados()
+        {
+            try
+            {
+                using (var dbContexto = new AppDbContexto())
+                {
+                    dbContexto.Database.Migrate();
+                }
             }
             catch (Exception ex)
             {

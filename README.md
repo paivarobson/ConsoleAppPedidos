@@ -1,14 +1,14 @@
 # Sistema de Pedidos
 Este é um sistema de pedidos que permite cadastrar produtos, criar pedidos, consultar produtos e imprimir detalhes dos pedidos. O sistema foi desenvolvido em C# e utiliza tecnologias como .NET Core, Entity Framework Core e SQL Server.
 
-## Recursos
+# Recursos
 
 - **Cadastro de Produtos:** Permite cadastrar novos produtos informando a descrição e a categoria.
 - **Criação de pedidos:** É possível criar novos pedidos fornecendo um identificador e uma descrição. Os pedidos podem incluir itens associados a produtos.
 - **Consulta de produtos:** O sistema oferece a funcionalidade de consultar produtos pelo seu ID, exibindo informações como o código, a descrição e a categoria.
 - **Impressão de detalhes dos pedidos:** Os detalhes de um pedido, incluindo os itens associados, podem ser impressos para visualização.
 
-## Arquitetura, Princípios e Padrões Utilizados
+# Arquitetura, Princípios e Padrões Utilizados
 - **Arquitetura:** Aplicação baseada em camadas.
 - **Padrões Arquiteturais:** DDD (Domain-Driven Design) - Implementação parcial, separando as entidades em suas respectivas classes e definindo interfaces para os repositórios e serviços relacionados a essas entidades.
 - **Injeção de Dependência:** O projeto utiliza o recurso de injeção de dependência para gerenciar a criação e resolução de dependências entre os componentes.
@@ -21,13 +21,13 @@ Este é um sistema de pedidos que permite cadastrar produtos, criar pedidos, con
 - **Documentação:** Inclusão de documentação nos métodos e interfaces para descrever a funcionalidade, parâmetros e exceções lançadas.
 - **Data Annotations:** Utilizado as Data Annotations para aplicar validações e restrições aos modelos de dados, garantindo a integridade dos dados armazenados e facilitando a validação dos inputs fornecidos pelos usuários.
 
-## Tecnologias Utilizadas
+# Tecnologias Utilizadas
 
 - **Linguagem de Programação:** C#
 - **Frameworks e Bibliotecas:** .NET Core 7, Entity Framework Core
 - **Banco de Dados:** SQL Server
 
-## Requisitos
+# Requisitos
 
 - .NET Core SDK
 - SQL Server
